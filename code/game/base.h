@@ -2,14 +2,13 @@
 Base functions and types for the game (e.g., game objects).
 */
 
-#include <allegro5/allegro.h>
-
 #include "../physics/base.h"
+#include "../graphics/base.h"
 
 
 typedef struct {
-    Object2D* physical_object;
-    ALLEGRO_BITMAP* image;
+    Object2D* object2d;
+    GraphicObject* graphic_object;
 } GameObject;
 
-GameObject* GameObject_init(Object2D* physical_object);
+GameObject* GameObject_init(Object2D* object2d, const char* filename);
