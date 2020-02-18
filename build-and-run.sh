@@ -13,7 +13,7 @@ fi
 
 gcc \
     -std=c99 \
-    code/main.c code/logging.c \
+    code/main.c code/base.c code/logging.c \
     -o ${EXEC_FILENAME} \
     $(pkg-config --libs allegro-5 allegro_image-5 allegro_primitives-5)
 

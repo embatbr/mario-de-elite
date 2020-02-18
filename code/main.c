@@ -1,17 +1,18 @@
-// #include <stdbool.h> # needed for type `bool`
-// #include <stdlib.h>
+#include <stdbool.h>
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 
+#include "base.h"
 #include "logging.h"
 
 
 const float FPS = 25;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
-const int BOUNCER_SIZE = 32;
+const int MARIO_BMP_WIDTH = 32;
+const int MARIO_BMP_HEIGHT = 42;
 
 
 typedef struct {
@@ -20,22 +21,14 @@ typedef struct {
     ALLEGRO_EVENT_QUEUE* event_queue;
     ALLEGRO_BITMAP* canvas;
     ALLEGRO_BITMAP* background;
-    ALLEGRO_BITMAP* bouncer;
+    ALLEGRO_BITMAP* mario_bmp;
 } AllegroDevices;
-
-
-typedef struct {
-    int x_pos;
-    int y_pos;
-    int x_speed;
-    int y_speed;
-} Object;
 
 
 int DRAW_FLAGS = 0;
 
-int mouse_x = -1;
-int mouse_y = -1;
+Object2D* mario;
+Point2D* mouse_position;
 
 
 /**
@@ -94,9 +87,9 @@ int init_allegro_devices(AllegroDevices* allegro_devices) {
         return -1;
     }
 
-    allegro_devices->bouncer = al_load_bitmap("resources/images/mario.png");
-    if(!allegro_devices->bouncer) {
-        print_error("failed to create bouncer bitmap!");
+    allegro_devices->mario_bmp = al_load_bitmap("resources/images/mario.png");
+    if(!allegro_devices->mario_bmp) {
+        print_error("failed to create mario_bmp bitmap!");
         al_destroy_display(allegro_devices->display);
         al_destroy_timer(allegro_devices->timer);
         return -1;
@@ -109,7 +102,7 @@ int init_allegro_devices(AllegroDevices* allegro_devices) {
         al_destroy_timer(allegro_devices->timer);
         al_destroy_bitmap(allegro_devices->canvas);
         al_destroy_bitmap(allegro_devices->background);
-        al_destroy_bitmap(allegro_devices->bouncer);
+        al_destroy_bitmap(allegro_devices->mario_bmp);
         return -1;
     }
 
@@ -122,7 +115,7 @@ void deinit_allegro_devices(AllegroDevices* allegro_devices) {
     al_destroy_event_queue(allegro_devices->event_queue);
     al_destroy_bitmap(allegro_devices->canvas);
     al_destroy_bitmap(allegro_devices->background);
-    al_destroy_bitmap(allegro_devices->bouncer);
+    al_destroy_bitmap(allegro_devices->mario_bmp);
 }
 
 
@@ -157,18 +150,18 @@ void show(AllegroDevices* allegro_devices) {
 }
 
 
-void draw(AllegroDevices* allegro_devices, Object* object, int rgb) {
+void draw(AllegroDevices* allegro_devices, int rgb) {
     // reset canvas
     al_set_target_bitmap(allegro_devices->canvas);
     al_clear_to_color(al_map_rgb(255, 255, 255));
 
     // draw on canvas
     al_draw_bitmap(allegro_devices->background, 0, 0, 0);
-    al_draw_bitmap(allegro_devices->bouncer, object->x_pos, object->y_pos, DRAW_FLAGS);
+    al_draw_bitmap(allegro_devices->mario_bmp, mario->position->x_axis, mario->position->y_axis, DRAW_FLAGS);
 
-    if(mouse_x >= 0 && mouse_y >= 0) {
-        al_draw_filled_circle(mouse_x, mouse_y, 5, al_map_rgb(0, 0, 0));
-        al_draw_circle(mouse_x, mouse_y, 15, al_map_rgb(0, 0, 0), 2);
+    if(mouse_position->x_axis >= 0 && mouse_position->y_axis >= 0) {
+        al_draw_filled_circle(mouse_position->x_axis, mouse_position->y_axis, 5, al_map_rgb(0, 0, 0));
+        al_draw_circle(mouse_position->x_axis, mouse_position->y_axis, 15, al_map_rgb(0, 0, 0), 2);
     }
 
     // show on display
@@ -182,13 +175,7 @@ void main_loop(AllegroDevices* allegro_devices) {
     int rgb = 0;
     int step = 5;
 
-    Object* object = malloc(sizeof(Object));
-    object->x_pos = (SCREEN_WIDTH / 2) - (BOUNCER_SIZE / 2);
-    object->y_pos = (SCREEN_HEIGHT / 2) - (BOUNCER_SIZE / 2);
-    object->x_speed = 0;
-    object->y_speed = 0;
-
-    draw(allegro_devices, object, rgb);
+    draw(allegro_devices, rgb);
 
     al_start_timer(allegro_devices->timer);
 
@@ -198,19 +185,19 @@ void main_loop(AllegroDevices* allegro_devices) {
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
             if(!paused) {
-                if(object->x_pos < 0 || object->x_pos >  SCREEN_WIDTH - BOUNCER_SIZE) {
-                    object->x_speed = -object->x_speed;
+                if(mario->position->x_axis < 0 || mario->position->x_axis >  SCREEN_WIDTH - MARIO_BMP_WIDTH) {
+                    mario->speed->x_axis = -mario->speed->x_axis;
                 }
 
-                if(object->y_pos < 0 || object->y_pos > SCREEN_HEIGHT - BOUNCER_SIZE) {
-                    object->y_speed = -object->y_speed;
+                if(mario->position->y_axis < 0 || mario->position->y_axis > SCREEN_HEIGHT - MARIO_BMP_HEIGHT) {
+                    mario->speed->y_axis = -mario->speed->y_axis;
                 }
 
-                object->x_pos += object->x_speed;
-                object->y_pos += object->y_speed;
+                mario->position->x_axis += mario->speed->x_axis;
+                mario->position->y_axis += mario->speed->y_axis;
 
-                object->x_speed = 0;
-                object->y_speed = 0;
+                mario->speed->x_axis = 0;
+                mario->speed->y_axis = 0;
             }
 
             redraw = true;
@@ -232,24 +219,24 @@ void main_loop(AllegroDevices* allegro_devices) {
                 break;
             }
             else if(!paused && ev.keyboard.keycode == 1) { // LEFT
-                object->x_speed = -10;
+                mario->speed->x_axis = -10;
             }
             else if(!paused && ev.keyboard.keycode == 4) { // RIGHT
-                object->x_speed = 10;
+                mario->speed->x_axis = 10;
             }
             else if(!paused && ev.keyboard.keycode == 23) { // UP
-                object->y_speed = -10;
+                mario->speed->y_axis = -10;
             }
             else if(!paused && ev.keyboard.keycode == 19) { // DOWN
-                object->y_speed = 10;
+                mario->speed->y_axis = 10;
             }
         }
         else if(!paused && (ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY ||
                             ev.type == ALLEGRO_EVENT_MOUSE_AXES)) {
-            mouse_x = ev.mouse.x;
-            mouse_y = ev.mouse.y;
+            mouse_position->x_axis = ev.mouse.x;
+            mouse_position->y_axis = ev.mouse.y;
 
-            if(ev.mouse.x < (object->x_pos + BOUNCER_SIZE/2)) {
+            if(ev.mouse.x < (mario->position->x_axis + MARIO_BMP_WIDTH/2)) {
                 DRAW_FLAGS = DRAW_FLAGS | ALLEGRO_FLIP_HORIZONTAL;
             }
             else if(DRAW_FLAGS & ALLEGRO_FLIP_HORIZONTAL == ALLEGRO_FLIP_HORIZONTAL){
@@ -257,12 +244,16 @@ void main_loop(AllegroDevices* allegro_devices) {
             }
         }
         else if(!paused && ev.type == ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY) {
-            mouse_x = mouse_y = -1;
+            mouse_position->x_axis = mouse_position->y_axis = -1;
+        }
+        else if(!paused && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+            mario->position->x_axis = ev.mouse.x;
+            mario->position->y_axis = ev.mouse.y;
         }
 
         if(redraw && al_is_event_queue_empty(allegro_devices->event_queue)) {
             redraw = false;
-            draw(allegro_devices, object, rgb);
+            draw(allegro_devices, rgb);
         }
 
         if(!paused) {
@@ -275,6 +266,15 @@ void main_loop(AllegroDevices* allegro_devices) {
 }
 
 
+void init_base() {
+    mouse_position = malloc(sizeof(Point2D));
+    mouse_position->x_axis = -1;
+    mouse_position->y_axis = -1;
+
+    mario = Object2D_init_2( 100, 100, MARIO_BMP_WIDTH, MARIO_BMP_HEIGHT, 0, 0, true);
+}
+
+
 int main(int argc, char** argv) {
     AllegroDevices* allegro_devices = malloc(sizeof(AllegroDevices));
 
@@ -283,6 +283,8 @@ int main(int argc, char** argv) {
     }
 
     register_events_sources(allegro_devices);
+
+    init_base();
 
     main_loop(allegro_devices);
 
