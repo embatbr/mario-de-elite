@@ -17,15 +17,14 @@ const int MARIO_HEIGHT = 42;
 
 typedef struct {
     ALLEGRO_TIMER* timer;
-    ALLEGRO_DISPLAY* display;
     ALLEGRO_EVENT_QUEUE* event_queue;
-    ALLEGRO_BITMAP* canvas;
-    ALLEGRO_BITMAP* background;
 } AllegroDevices;
 
 
 int DRAW_FLAGS = 0;
 
+Screen* screen;
+GraphicObject* background;
 GameObject* mario;
 Point2D* mouse_position;
 
@@ -65,34 +64,10 @@ int init_allegro_devices(AllegroDevices* allegro_devices) {
         return -1;
     }
 
-    allegro_devices->display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
-    if(!allegro_devices->display) {
-        print_error("failed to create display!");
-        return -1;
-    }
-
-    allegro_devices->canvas = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
-    if(!allegro_devices->canvas) {
-        print_error("failed to create canvas bitmap!");
-        al_destroy_display(allegro_devices->display);
-        al_destroy_timer(allegro_devices->timer);
-        return -1;
-    }
-
-    allegro_devices->background = al_load_bitmap("resources/images/bkg.jpg");
-    if(!allegro_devices->background) {
-        print_error("failed to load background");
-        al_destroy_display(allegro_devices->display);
-        return -1;
-    }
-
     allegro_devices->event_queue = al_create_event_queue();
     if(!allegro_devices->event_queue) {
         print_error("failed to create event_queue!");
-        al_destroy_display(allegro_devices->display);
         al_destroy_timer(allegro_devices->timer);
-        al_destroy_bitmap(allegro_devices->canvas);
-        al_destroy_bitmap(allegro_devices->background);
         return -1;
     }
 
@@ -101,17 +76,14 @@ int init_allegro_devices(AllegroDevices* allegro_devices) {
 
 void deinit_allegro_devices(AllegroDevices* allegro_devices) {
     al_destroy_timer(allegro_devices->timer);
-    al_destroy_display(allegro_devices->display);
     al_destroy_event_queue(allegro_devices->event_queue);
-    al_destroy_bitmap(allegro_devices->canvas);
-    al_destroy_bitmap(allegro_devices->background);
 }
 
 
 void register_events_sources(AllegroDevices* allegro_devices) {
     al_register_event_source(
         allegro_devices->event_queue,
-        al_get_display_event_source(allegro_devices->display)
+        al_get_display_event_source(screen->display)
     );
 
     al_register_event_source(
@@ -131,21 +103,21 @@ void register_events_sources(AllegroDevices* allegro_devices) {
 }
 
 
-void show(AllegroDevices* allegro_devices) {
-    al_set_target_bitmap(al_get_backbuffer(allegro_devices->display));
-    al_draw_bitmap(allegro_devices->canvas, 0, 0, 0);
+void show() {
+    al_set_target_bitmap(al_get_backbuffer(screen->display));
+    al_draw_bitmap(screen->canvas, 0, 0, 0);
 
     al_flip_display();
 }
 
 
-void draw(AllegroDevices* allegro_devices, int rgb) {
+void draw(int rgb) {
     // reset canvas
-    al_set_target_bitmap(allegro_devices->canvas);
-    al_clear_to_color(al_map_rgb(255, 255, 255));
+    al_set_target_bitmap(screen->canvas);
+    al_clear_to_color(BASE_COLOR_WHITE);
 
     // draw on canvas
-    al_draw_bitmap(allegro_devices->background, 0, 0, 0);
+    al_draw_bitmap(background->image, 0, 0, 0);
     al_draw_bitmap(mario->graphic_object->image, mario->object2d->position->x_axis,
                    mario->object2d->position->y_axis, DRAW_FLAGS);
 
@@ -155,7 +127,7 @@ void draw(AllegroDevices* allegro_devices, int rgb) {
     }
 
     // show on display
-    show(allegro_devices);
+    show();
 }
 
 
@@ -165,7 +137,7 @@ void main_loop(AllegroDevices* allegro_devices) {
     int rgb = 0;
     int step = 5;
 
-    draw(allegro_devices, rgb);
+    draw(rgb);
 
     al_start_timer(allegro_devices->timer);
 
@@ -200,7 +172,7 @@ void main_loop(AllegroDevices* allegro_devices) {
 
             if(ev.keyboard.keycode == 67) { // ENTER
                 if(!paused) {
-                    al_save_bitmap("resources/images/canvas.bmp", allegro_devices->canvas);
+                    al_save_bitmap("resources/images/canvas.bmp", screen->canvas);
                 }
 
                 paused = !paused;
@@ -243,7 +215,7 @@ void main_loop(AllegroDevices* allegro_devices) {
 
         if(redraw && al_is_event_queue_empty(allegro_devices->event_queue)) {
             redraw = false;
-            draw(allegro_devices, rgb);
+            draw(rgb);
         }
 
         if(!paused) {
@@ -261,6 +233,10 @@ void init_base() {
     mouse_position->x_axis = -1;
     mouse_position->y_axis = -1;
 
+    screen = Screen_init(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    background = GraphicObject_init("bkg.png");
+
     Object2D* mario_object2d = Object2D_init_2(100, 100, MARIO_WIDTH, MARIO_HEIGHT,
                                                0, 0, true);
     mario = GameObject_init(mario_object2d, "mario.png");
@@ -274,9 +250,8 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    register_events_sources(allegro_devices);
-
     init_base();
+    register_events_sources(allegro_devices);
 
     main_loop(allegro_devices);
 
