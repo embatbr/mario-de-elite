@@ -1,5 +1,5 @@
 /**
-Functions and types basic for the game (e.g., collision boxes).
+Base functions and types to work with physics (e.g., collision boxes).
 */
 
 #include <stdbool.h>

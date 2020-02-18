@@ -4,7 +4,7 @@ export PROJECT_ROOT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd ${PROJECT_ROOT_PATH}
 
 
-EXEC_FILENAME="game"
+EXEC_FILENAME="game.exe"
 
 
 if test -f "${EXEC_FILENAME}"; then
@@ -13,7 +13,9 @@ fi
 
 gcc \
     -std=c99 \
-    code/main.c code/physics/base.c code/logging.c \
+    code/main.c code/logging.c \
+    code/physics/base.c \
+    code/game/base.c \
     -o ${EXEC_FILENAME} \
     $(pkg-config --libs allegro-5 allegro_image-5 allegro_primitives-5)
 

@@ -4,15 +4,15 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 
-#include "physics/base.h"
+#include "game/base.h"
 #include "logging.h"
 
 
 const float FPS = 25;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
-const int MARIO_BMP_WIDTH = 32;
-const int MARIO_BMP_HEIGHT = 42;
+const int MARIO_WIDTH = 32;
+const int MARIO_HEIGHT = 42;
 
 
 typedef struct {
@@ -27,7 +27,7 @@ typedef struct {
 
 int DRAW_FLAGS = 0;
 
-Object2D* mario;
+GameObject* mario;
 Point2D* mouse_position;
 
 
@@ -157,7 +157,8 @@ void draw(AllegroDevices* allegro_devices, int rgb) {
 
     // draw on canvas
     al_draw_bitmap(allegro_devices->background, 0, 0, 0);
-    al_draw_bitmap(allegro_devices->mario_bmp, mario->position->x_axis, mario->position->y_axis, DRAW_FLAGS);
+    al_draw_bitmap(allegro_devices->mario_bmp, mario->physical_object->position->x_axis,
+                   mario->physical_object->position->y_axis, DRAW_FLAGS);
 
     if(mouse_position->x_axis >= 0 && mouse_position->y_axis >= 0) {
         al_draw_filled_circle(mouse_position->x_axis, mouse_position->y_axis, 5, al_map_rgb(0, 0, 0));
@@ -185,19 +186,19 @@ void main_loop(AllegroDevices* allegro_devices) {
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
             if(!paused) {
-                if(mario->position->x_axis < 0 || mario->position->x_axis >  SCREEN_WIDTH - MARIO_BMP_WIDTH) {
-                    mario->speed->x_axis = -mario->speed->x_axis;
+                if(mario->physical_object->position->x_axis < 0 || mario->physical_object->position->x_axis >  SCREEN_WIDTH - MARIO_WIDTH) {
+                    mario->physical_object->speed->x_axis = -mario->physical_object->speed->x_axis;
                 }
 
-                if(mario->position->y_axis < 0 || mario->position->y_axis > SCREEN_HEIGHT - MARIO_BMP_HEIGHT) {
-                    mario->speed->y_axis = -mario->speed->y_axis;
+                if(mario->physical_object->position->y_axis < 0 || mario->physical_object->position->y_axis > SCREEN_HEIGHT - MARIO_HEIGHT) {
+                    mario->physical_object->speed->y_axis = -mario->physical_object->speed->y_axis;
                 }
 
-                mario->position->x_axis += mario->speed->x_axis;
-                mario->position->y_axis += mario->speed->y_axis;
+                mario->physical_object->position->x_axis += mario->physical_object->speed->x_axis;
+                mario->physical_object->position->y_axis += mario->physical_object->speed->y_axis;
 
-                mario->speed->x_axis = 0;
-                mario->speed->y_axis = 0;
+                mario->physical_object->speed->x_axis = 0;
+                mario->physical_object->speed->y_axis = 0;
             }
 
             redraw = true;
@@ -219,16 +220,16 @@ void main_loop(AllegroDevices* allegro_devices) {
                 break;
             }
             else if(!paused && ev.keyboard.keycode == 1) { // LEFT
-                mario->speed->x_axis = -10;
+                mario->physical_object->speed->x_axis = -10;
             }
             else if(!paused && ev.keyboard.keycode == 4) { // RIGHT
-                mario->speed->x_axis = 10;
+                mario->physical_object->speed->x_axis = 10;
             }
             else if(!paused && ev.keyboard.keycode == 23) { // UP
-                mario->speed->y_axis = -10;
+                mario->physical_object->speed->y_axis = -10;
             }
             else if(!paused && ev.keyboard.keycode == 19) { // DOWN
-                mario->speed->y_axis = 10;
+                mario->physical_object->speed->y_axis = 10;
             }
         }
         else if(!paused && (ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY ||
@@ -236,7 +237,7 @@ void main_loop(AllegroDevices* allegro_devices) {
             mouse_position->x_axis = ev.mouse.x;
             mouse_position->y_axis = ev.mouse.y;
 
-            if(ev.mouse.x < (mario->position->x_axis + MARIO_BMP_WIDTH/2)) {
+            if(ev.mouse.x < (mario->physical_object->position->x_axis + MARIO_WIDTH/2)) {
                 DRAW_FLAGS = DRAW_FLAGS | ALLEGRO_FLIP_HORIZONTAL;
             }
             else if(DRAW_FLAGS & ALLEGRO_FLIP_HORIZONTAL == ALLEGRO_FLIP_HORIZONTAL){
@@ -247,8 +248,8 @@ void main_loop(AllegroDevices* allegro_devices) {
             mouse_position->x_axis = mouse_position->y_axis = -1;
         }
         else if(!paused && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-            mario->position->x_axis = ev.mouse.x;
-            mario->position->y_axis = ev.mouse.y;
+            mario->physical_object->position->x_axis = ev.mouse.x;
+            mario->physical_object->position->y_axis = ev.mouse.y;
         }
 
         if(redraw && al_is_event_queue_empty(allegro_devices->event_queue)) {
@@ -271,7 +272,9 @@ void init_base() {
     mouse_position->x_axis = -1;
     mouse_position->y_axis = -1;
 
-    mario = Object2D_init_2( 100, 100, MARIO_BMP_WIDTH, MARIO_BMP_HEIGHT, 0, 0, true);
+    Object2D* mario_physical_object = Object2D_init_2(100, 100, MARIO_WIDTH,
+                                                      MARIO_HEIGHT, 0, 0, true);
+    mario = GameObject_init(mario_physical_object);
 }
 
 
