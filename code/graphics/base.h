@@ -7,9 +7,8 @@ Base functions and types for the game graphics.
 #include <allegro5/allegro.h>
 
 
-#ifndef BASE_COLOR_WHITE
-    #define BASE_COLOR_WHITE al_map_rgb(255, 255, 255)
-#endif
+#define BASE_COLOR_WHITE al_map_rgb(255, 255, 255)
+#define BASE_COLOR_BLACK al_map_rgb(0, 0, 0)
 
 
 typedef struct {

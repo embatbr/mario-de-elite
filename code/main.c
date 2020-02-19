@@ -7,6 +7,7 @@
 #include "physics/base.h"
 #include "game/base.h"
 #include "graphics/base.h"
+#include "graphics/drawing.h"
 #include "logging.h"
 
 
@@ -29,7 +30,8 @@ int DRAW_FLAGS = 0;
 Screen* screen;
 GraphicObject* background;
 
-GameObject** blocks;
+GameScenario* scenario;
+
 GameObject* mario;
 
 Point2D* mouse_position;
@@ -109,46 +111,37 @@ void register_events_sources(AllegroDevices* allegro_devices) {
 }
 
 
-void show() {
-    al_set_target_bitmap(al_get_backbuffer(screen->display));
-    al_draw_bitmap(screen->canvas, 0, 0, 0);
-
-    al_flip_display();
-}
-
-
-void draw(int rgb) {
+void draw() {
     // reset canvas
-    al_set_target_bitmap(screen->canvas);
-    al_clear_to_color(BASE_COLOR_WHITE);
+    clear_screen(screen);
 
     // draw on canvas
-    al_draw_bitmap(background->image, 0, 0, 0);
-    for(int i = 0; i < NUM_BLOCKS; i++) {
-        GameObject* block = *(blocks + i);
-        al_draw_bitmap(block->graphic_object->image, block->object2d->position->x_axis,
-                       block->object2d->position->y_axis, 0);
-    }
-    al_draw_bitmap(mario->graphic_object->image, mario->object2d->position->x_axis,
-                   mario->object2d->position->y_axis, DRAW_FLAGS);
+    paint_screen(screen, background, 0, 0, 0);
 
-    if(mouse_position->x_axis >= 0 && mouse_position->y_axis >= 0) {
-        al_draw_filled_circle(mouse_position->x_axis, mouse_position->y_axis, 5, al_map_rgb(0, 0, 0));
-        al_draw_circle(mouse_position->x_axis, mouse_position->y_axis, 15, al_map_rgb(0, 0, 0), 2);
+    for(int i = 0; i < scenario->num_game_objects; i++) {
+        GameObject* block = *(scenario->game_objects + i);
+        Point2D* position = block->object2d->position;
+
+        paint_screen(screen, block->graphic_object, position->x_axis, position->y_axis, 0);
     }
+
+    Point2D* position = mario->object2d->position;
+    paint_screen(screen, mario->graphic_object, position->x_axis, position->y_axis, DRAW_FLAGS);
+
+    // TODO for testing purposes only
+    al_draw_filled_circle(mouse_position->x_axis, mouse_position->y_axis, 5, BASE_COLOR_BLACK);
+    al_draw_circle(mouse_position->x_axis, mouse_position->y_axis, 15, BASE_COLOR_BLACK, 2);
 
     // show on display
-    show();
+    update_screen(screen);
 }
 
 
 void main_loop(AllegroDevices* allegro_devices) {
     bool paused = false;
     bool redraw = true;
-    int rgb = 0;
-    int step = 5;
 
-    draw(rgb);
+    draw();
 
     al_start_timer(allegro_devices->timer);
 
@@ -216,9 +209,6 @@ void main_loop(AllegroDevices* allegro_devices) {
                 DRAW_FLAGS = DRAW_FLAGS ^ ALLEGRO_FLIP_HORIZONTAL;
             }
         }
-        else if(!paused && ev.type == ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY) {
-            mouse_position->x_axis = mouse_position->y_axis = -1;
-        }
         else if(!paused && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
             mario->object2d->position->x_axis = ev.mouse.x;
             mario->object2d->position->y_axis = ev.mouse.y;
@@ -226,14 +216,7 @@ void main_loop(AllegroDevices* allegro_devices) {
 
         if(redraw && al_is_event_queue_empty(allegro_devices->event_queue)) {
             redraw = false;
-            draw(rgb);
-        }
-
-        if(!paused) {
-            rgb = rgb + step;
-            if(rgb == 0 || rgb == 255) {
-                step = -step;
-            }
+            draw();
         }
     }
 }
@@ -248,11 +231,7 @@ void init_base() {
 
     background = GraphicObject_init("backgrounds/05.png");
 
-    blocks = malloc(sizeof(GameObject*) * NUM_BLOCKS);
-    for(int i = 0; i < NUM_BLOCKS; i++) {
-        Object2D* block_object2d = Object2D_init_2(100*(i + 1), 400 - 50*i, 128, 32, 0, 0, true);
-        *(blocks + i) = GameObject_init(block_object2d, "scenario/block-4w.png");
-    }
+    scenario = GameScenario_init(NUM_BLOCKS);
 
     Object2D* mario_object2d = Object2D_init_2(100, 100, MARIO_WIDTH, MARIO_HEIGHT, 0, 0, true);
     mario = GameObject_init(mario_object2d, "mario.png");

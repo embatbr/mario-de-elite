@@ -16,7 +16,7 @@ gcc \
     code/main.c code/logging.c \
     code/physics/base.c \
     code/game/base.c \
-    code/graphics/base.c \
+    code/graphics/base.c code/graphics/drawing.c \
     -o ${EXEC_FILENAME} \
     $(pkg-config --libs allegro-5 allegro_image-5 allegro_primitives-5)
 

@@ -20,5 +20,12 @@ typedef struct {
 GameObject* GameObject_init(Object2D* object2d, const char* filename);
 
 
+// TODO create types 'GamePlatform' and 'GameWall', referencing 'GameObject'
+
+
 typedef struct {
+    int num_game_objects;
+    GameObject** game_objects;
 } GameScenario;
+
+GameScenario* GameScenario_init(int num_game_objects);
