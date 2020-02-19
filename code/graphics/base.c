@@ -10,7 +10,7 @@ const int FILEPATH_MAX_LENGTH = 100;
 
 
 Screen* Screen_init(int width, int height) {
-    Screen *ret = malloc(sizeof(Screen));
+    Screen* ret = malloc(sizeof(Screen));
 
     ret->canvas = al_create_bitmap(width, height);
     if(!ret->canvas) {
@@ -29,7 +29,7 @@ Screen* Screen_init(int width, int height) {
 
 
 GraphicObject* GraphicObject_init(const char* filename){
-    GraphicObject *ret = malloc(sizeof(GraphicObject));
+    GraphicObject* ret = malloc(sizeof(GraphicObject));
 
     char* filepath = malloc(sizeof(char) * FILEPATH_MAX_LENGTH);
     snprintf(filepath, FILEPATH_MAX_LENGTH, "%s/%s", IMAGES_DIRPATH, filename);

@@ -4,7 +4,7 @@
 
 
 Point2D* Point2D_init(int x_axis, int y_axis) {
-    Point2D *ret = malloc(sizeof(Point2D));
+    Point2D* ret = malloc(sizeof(Point2D));
 
     ret->x_axis = x_axis;
     ret->y_axis = y_axis;
@@ -14,7 +14,7 @@ Point2D* Point2D_init(int x_axis, int y_axis) {
 
 
 Box2D* Box2D_init(int width, int height) {
-    Box2D *ret = malloc(sizeof(Box2D));
+    Box2D* ret = malloc(sizeof(Box2D));
 
     ret->width = width;
     ret->height = height;
@@ -24,7 +24,7 @@ Box2D* Box2D_init(int width, int height) {
 
 
 Speed2D* Speed2D_init(int x_axis, int y_axis) {
-    Speed2D *ret = malloc(sizeof(Speed2D));
+    Speed2D* ret = malloc(sizeof(Speed2D));
 
     ret->x_axis = x_axis;
     ret->y_axis = y_axis;
@@ -35,7 +35,7 @@ Speed2D* Speed2D_init(int x_axis, int y_axis) {
 
 Object2D* Object2D_init(Point2D* position, Box2D* collision_box, Speed2D* speed,
                         bool has_gravity) {
-    Object2D *ret = malloc(sizeof(Object2D));
+    Object2D* ret = malloc(sizeof(Object2D));
 
     ret->position = position;
     ret->collision_box = collision_box;

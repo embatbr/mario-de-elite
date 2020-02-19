@@ -29,3 +29,15 @@ typedef struct {
 } GameScenario;
 
 GameScenario* GameScenario_init(int num_game_objects);
+
+
+typedef struct {
+    Screen* screen;
+    GraphicObject* background;
+    GameScenario* scenario;
+    GameObject* mario;
+    Point2D* mouse_position;
+} GamePlay;
+
+GamePlay* GamePlay_init(Screen* screen, GraphicObject* background, GameScenario* scenario,
+                        GameObject* mario, Point2D* mouse_position);

@@ -6,6 +6,7 @@
 
 #include "physics/base.h"
 #include "game/base.h"
+#include "game/logic.h"
 #include "graphics/base.h"
 #include "graphics/drawing.h"
 #include "logging.h"
@@ -26,15 +27,6 @@ typedef struct {
 
 
 int DRAW_FLAGS = 0;
-
-Screen* screen;
-GraphicObject* background;
-
-GameScenario* scenario;
-
-GameObject* mario;
-
-Point2D* mouse_position;
 
 
 /**
@@ -88,10 +80,10 @@ void deinit_allegro_devices(AllegroDevices* allegro_devices) {
 }
 
 
-void register_events_sources(AllegroDevices* allegro_devices) {
+void register_events_sources(AllegroDevices* allegro_devices, GamePlay* game_play) {
     al_register_event_source(
         allegro_devices->event_queue,
-        al_get_display_event_source(screen->display)
+        al_get_display_event_source(game_play->screen->display)
     );
 
     al_register_event_source(
@@ -111,37 +103,11 @@ void register_events_sources(AllegroDevices* allegro_devices) {
 }
 
 
-void draw() {
-    // reset canvas
-    clear_screen(screen);
-
-    // draw on canvas
-    paint_screen(screen, background, 0, 0, 0);
-
-    for(int i = 0; i < scenario->num_game_objects; i++) {
-        GameObject* block = *(scenario->game_objects + i);
-        Point2D* position = block->object2d->position;
-
-        paint_screen(screen, block->graphic_object, position->x_axis, position->y_axis, 0);
-    }
-
-    Point2D* position = mario->object2d->position;
-    paint_screen(screen, mario->graphic_object, position->x_axis, position->y_axis, DRAW_FLAGS);
-
-    // TODO for testing purposes only
-    al_draw_filled_circle(mouse_position->x_axis, mouse_position->y_axis, 5, BASE_COLOR_BLACK);
-    al_draw_circle(mouse_position->x_axis, mouse_position->y_axis, 15, BASE_COLOR_BLACK, 2);
-
-    // show on display
-    update_screen(screen);
-}
-
-
-void main_loop(AllegroDevices* allegro_devices) {
+void main_loop(AllegroDevices* allegro_devices, GamePlay* game_play) {
     bool paused = false;
     bool redraw = true;
 
-    draw();
+    draw_game_play(game_play, DRAW_FLAGS);
 
     al_start_timer(allegro_devices->timer);
 
@@ -151,19 +117,19 @@ void main_loop(AllegroDevices* allegro_devices) {
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
             if(!paused) {
-                if(mario->object2d->position->x_axis < 0 || mario->object2d->position->x_axis >  SCREEN_WIDTH - MARIO_WIDTH) {
-                    mario->object2d->speed->x_axis = -mario->object2d->speed->x_axis;
+                if(game_play->mario->object2d->position->x_axis < 0 || game_play->mario->object2d->position->x_axis >  SCREEN_WIDTH - MARIO_WIDTH) {
+                    game_play->mario->object2d->speed->x_axis = -game_play->mario->object2d->speed->x_axis;
                 }
 
-                if(mario->object2d->position->y_axis < 0 || mario->object2d->position->y_axis > SCREEN_HEIGHT - MARIO_HEIGHT) {
-                    mario->object2d->speed->y_axis = -mario->object2d->speed->y_axis;
+                if(game_play->mario->object2d->position->y_axis < 0 || game_play->mario->object2d->position->y_axis > SCREEN_HEIGHT - MARIO_HEIGHT) {
+                    game_play->mario->object2d->speed->y_axis = -game_play->mario->object2d->speed->y_axis;
                 }
 
-                mario->object2d->position->x_axis += mario->object2d->speed->x_axis;
-                mario->object2d->position->y_axis += mario->object2d->speed->y_axis;
+                game_play->mario->object2d->position->x_axis += game_play->mario->object2d->speed->x_axis;
+                game_play->mario->object2d->position->y_axis += game_play->mario->object2d->speed->y_axis;
 
-                mario->object2d->speed->x_axis = 0;
-                mario->object2d->speed->y_axis = 0;
+                game_play->mario->object2d->speed->x_axis = 0;
+                game_play->mario->object2d->speed->y_axis = 0;
             }
 
             redraw = true;
@@ -175,34 +141,30 @@ void main_loop(AllegroDevices* allegro_devices) {
             // printf("%d\n", ev.keyboard.keycode);
 
             if(ev.keyboard.keycode == 67) { // ENTER
-                if(!paused) {
-                    al_save_bitmap("resources/images/canvas.bmp", screen->canvas);
-                }
-
                 paused = !paused;
             }
             else if(ev.keyboard.keycode == 59) { // ESC
                 break;
             }
             else if(!paused && ev.keyboard.keycode == 1) { // LEFT
-                mario->object2d->speed->x_axis = -10;
+                game_play->mario->object2d->speed->x_axis = -10;
             }
             else if(!paused && ev.keyboard.keycode == 4) { // RIGHT
-                mario->object2d->speed->x_axis = 10;
+                game_play->mario->object2d->speed->x_axis = 10;
             }
             else if(!paused && ev.keyboard.keycode == 23) { // UP
-                mario->object2d->speed->y_axis = -10;
+                game_play->mario->object2d->speed->y_axis = -10;
             }
             else if(!paused && ev.keyboard.keycode == 19) { // DOWN
-                mario->object2d->speed->y_axis = 10;
+                game_play->mario->object2d->speed->y_axis = 10;
             }
         }
         else if(!paused && (ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY ||
                             ev.type == ALLEGRO_EVENT_MOUSE_AXES)) {
-            mouse_position->x_axis = ev.mouse.x;
-            mouse_position->y_axis = ev.mouse.y;
+            game_play->mouse_position->x_axis = ev.mouse.x;
+            game_play->mouse_position->y_axis = ev.mouse.y;
 
-            if(ev.mouse.x < (mario->object2d->position->x_axis + MARIO_WIDTH/2)) {
+            if(ev.mouse.x < (game_play->mario->object2d->position->x_axis + MARIO_WIDTH/2)) {
                 DRAW_FLAGS = DRAW_FLAGS | ALLEGRO_FLIP_HORIZONTAL;
             }
             else if(DRAW_FLAGS & ALLEGRO_FLIP_HORIZONTAL == ALLEGRO_FLIP_HORIZONTAL){
@@ -210,31 +172,29 @@ void main_loop(AllegroDevices* allegro_devices) {
             }
         }
         else if(!paused && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-            mario->object2d->position->x_axis = ev.mouse.x;
-            mario->object2d->position->y_axis = ev.mouse.y;
+            game_play->mario->object2d->position->x_axis = ev.mouse.x;
+            game_play->mario->object2d->position->y_axis = ev.mouse.y;
         }
 
         if(redraw && al_is_event_queue_empty(allegro_devices->event_queue)) {
             redraw = false;
-            draw();
+            draw_game_play(game_play, DRAW_FLAGS);
         }
     }
 }
 
 
-void init_base() {
-    mouse_position = malloc(sizeof(Point2D));
-    mouse_position->x_axis = -1;
-    mouse_position->y_axis = -1;
-
-    screen = Screen_init(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-    background = GraphicObject_init("backgrounds/05.png");
-
-    scenario = GameScenario_init(NUM_BLOCKS);
-
-    Object2D* mario_object2d = Object2D_init_2(100, 100, MARIO_WIDTH, MARIO_HEIGHT, 0, 0, true);
-    mario = GameObject_init(mario_object2d, "mario.png");
+GamePlay* init_game() {
+    return GamePlay_init(
+        Screen_init(SCREEN_WIDTH, SCREEN_HEIGHT),
+        GraphicObject_init("backgrounds/05.png"),
+        GameScenario_init(NUM_BLOCKS),
+        GameObject_init(
+            Object2D_init_2(100, 100, MARIO_WIDTH, MARIO_HEIGHT, 0, 0, true),
+            "mario.png"
+        ),
+        Point2D_init(100, 100)
+    );
 }
 
 
@@ -245,10 +205,10 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    init_base();
-    register_events_sources(allegro_devices);
+    GamePlay* game_play = init_game();
+    register_events_sources(allegro_devices, game_play);
 
-    main_loop(allegro_devices);
+    main_loop(allegro_devices, game_play);
 
     deinit_allegro_devices(allegro_devices);
 
