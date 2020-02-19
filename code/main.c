@@ -251,7 +251,7 @@ void init_base() {
     blocks = malloc(sizeof(GameObject*) * NUM_BLOCKS);
     for(int i = 0; i < NUM_BLOCKS; i++) {
         Object2D* block_object2d = Object2D_init_2(100*(i + 1), 400 - 50*i, 128, 32, 0, 0, true);
-        *(blocks + i) = GameObject_init(block_object2d, "cenario/block-4w.png");
+        *(blocks + i) = GameObject_init(block_object2d, "scenario/block-4w.png");
     }
 
     Object2D* mario_object2d = Object2D_init_2(100, 100, MARIO_WIDTH, MARIO_HEIGHT, 0, 0, true);

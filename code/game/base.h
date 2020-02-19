@@ -18,3 +18,7 @@ typedef struct {
 } GameObject;
 
 GameObject* GameObject_init(Object2D* object2d, const char* filename);
+
+
+typedef struct {
+} GameScenario;
