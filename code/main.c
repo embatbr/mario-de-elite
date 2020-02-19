@@ -15,6 +15,7 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 const int MARIO_WIDTH = 32;
 const int MARIO_HEIGHT = 42;
+const int NUM_BLOCKS = 5;
 
 
 typedef struct {
@@ -28,7 +29,7 @@ int DRAW_FLAGS = 0;
 Screen* screen;
 GraphicObject* background;
 
-GameObject* block;
+GameObject** blocks;
 GameObject* mario;
 
 Point2D* mouse_position;
@@ -123,8 +124,11 @@ void draw(int rgb) {
 
     // draw on canvas
     al_draw_bitmap(background->image, 0, 0, 0);
-    al_draw_bitmap(block->graphic_object->image, block->object2d->position->x_axis,
-                   block->object2d->position->y_axis, 0);
+    for(int i = 0; i < NUM_BLOCKS; i++) {
+        GameObject* block = *(blocks + i);
+        al_draw_bitmap(block->graphic_object->image, block->object2d->position->x_axis,
+                       block->object2d->position->y_axis, 0);
+    }
     al_draw_bitmap(mario->graphic_object->image, mario->object2d->position->x_axis,
                    mario->object2d->position->y_axis, DRAW_FLAGS);
 
@@ -244,8 +248,11 @@ void init_base() {
 
     background = GraphicObject_init("backgrounds/05.png");
 
-    Object2D* block_object2d = Object2D_init_2(250, 200, 128, 32, 0, 0, true);
-    block = GameObject_init(block_object2d, "cenario/block-4w.png");
+    blocks = malloc(sizeof(GameObject*) * NUM_BLOCKS);
+    for(int i = 0; i < NUM_BLOCKS; i++) {
+        Object2D* block_object2d = Object2D_init_2(100*(i + 1), 400 - 50*i, 128, 32, 0, 0, true);
+        *(blocks + i) = GameObject_init(block_object2d, "cenario/block-4w.png");
+    }
 
     Object2D* mario_object2d = Object2D_init_2(100, 100, MARIO_WIDTH, MARIO_HEIGHT, 0, 0, true);
     mario = GameObject_init(mario_object2d, "mario.png");
