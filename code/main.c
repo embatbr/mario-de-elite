@@ -5,6 +5,7 @@
 #include <allegro5/allegro_primitives.h>
 
 #include "game/base.h"
+#include "graphics/base.h"
 #include "logging.h"
 
 

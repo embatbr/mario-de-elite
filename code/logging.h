@@ -1,8 +1,6 @@
-#ifndef LOGGING_H
-    #define LOGGING_H
+#pragma once
 
-    #include <stdio.h>
+#include <stdio.h>
 
 
-    void print_error(const char *message);
-#endif
+void print_error(const char *message);
