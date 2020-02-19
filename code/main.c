@@ -26,9 +26,6 @@ typedef struct {
 } AllegroDevices;
 
 
-int DRAW_FLAGS = 0;
-
-
 /**
 Initialize Allegro and all devices associated (keyboards, timers, displays...).
 */
@@ -103,87 +100,6 @@ void register_events_sources(AllegroDevices* allegro_devices, GamePlay* game_pla
 }
 
 
-void main_loop(AllegroDevices* allegro_devices, GamePlay* game_play) {
-    bool paused = false;
-    bool redraw = true;
-
-    draw_game_play(game_play, DRAW_FLAGS);
-
-    al_start_timer(allegro_devices->timer);
-
-    while(1) {
-        ALLEGRO_EVENT ev;
-        al_wait_for_event(allegro_devices->event_queue, &ev);
-
-        if(ev.type == ALLEGRO_EVENT_TIMER) {
-            if(!paused) {
-                if(game_play->mario->object2d->position->x_axis < 0 || game_play->mario->object2d->position->x_axis >  SCREEN_WIDTH - MARIO_WIDTH) {
-                    game_play->mario->object2d->speed->x_axis = -game_play->mario->object2d->speed->x_axis;
-                }
-
-                if(game_play->mario->object2d->position->y_axis < 0 || game_play->mario->object2d->position->y_axis > SCREEN_HEIGHT - MARIO_HEIGHT) {
-                    game_play->mario->object2d->speed->y_axis = -game_play->mario->object2d->speed->y_axis;
-                }
-
-                game_play->mario->object2d->position->x_axis += game_play->mario->object2d->speed->x_axis;
-                game_play->mario->object2d->position->y_axis += game_play->mario->object2d->speed->y_axis;
-
-                game_play->mario->object2d->speed->x_axis = 0;
-                game_play->mario->object2d->speed->y_axis = 0;
-            }
-
-            redraw = true;
-        }
-        else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-            break;
-        }
-        else if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-            // printf("%d\n", ev.keyboard.keycode);
-
-            if(ev.keyboard.keycode == 67) { // ENTER
-                paused = !paused;
-            }
-            else if(ev.keyboard.keycode == 59) { // ESC
-                break;
-            }
-            else if(!paused && ev.keyboard.keycode == 1) { // LEFT
-                game_play->mario->object2d->speed->x_axis = -10;
-            }
-            else if(!paused && ev.keyboard.keycode == 4) { // RIGHT
-                game_play->mario->object2d->speed->x_axis = 10;
-            }
-            else if(!paused && ev.keyboard.keycode == 23) { // UP
-                game_play->mario->object2d->speed->y_axis = -10;
-            }
-            else if(!paused && ev.keyboard.keycode == 19) { // DOWN
-                game_play->mario->object2d->speed->y_axis = 10;
-            }
-        }
-        else if(!paused && (ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY ||
-                            ev.type == ALLEGRO_EVENT_MOUSE_AXES)) {
-            game_play->mouse_position->x_axis = ev.mouse.x;
-            game_play->mouse_position->y_axis = ev.mouse.y;
-
-            if(ev.mouse.x < (game_play->mario->object2d->position->x_axis + MARIO_WIDTH/2)) {
-                DRAW_FLAGS = DRAW_FLAGS | ALLEGRO_FLIP_HORIZONTAL;
-            }
-            else if(DRAW_FLAGS & ALLEGRO_FLIP_HORIZONTAL == ALLEGRO_FLIP_HORIZONTAL){
-                DRAW_FLAGS = DRAW_FLAGS ^ ALLEGRO_FLIP_HORIZONTAL;
-            }
-        }
-        else if(!paused && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-            game_play->mario->object2d->position->x_axis = ev.mouse.x;
-            game_play->mario->object2d->position->y_axis = ev.mouse.y;
-        }
-
-        if(redraw && al_is_event_queue_empty(allegro_devices->event_queue)) {
-            redraw = false;
-            draw_game_play(game_play, DRAW_FLAGS);
-        }
-    }
-}
-
-
 GamePlay* init_game() {
     return GamePlay_init(
         Screen_init(SCREEN_WIDTH, SCREEN_HEIGHT),
@@ -208,7 +124,7 @@ int main(int argc, char** argv) {
     GamePlay* game_play = init_game();
     register_events_sources(allegro_devices, game_play);
 
-    main_loop(allegro_devices, game_play);
+    main_loop(allegro_devices->timer, allegro_devices->event_queue, game_play);
 
     deinit_allegro_devices(allegro_devices);
 

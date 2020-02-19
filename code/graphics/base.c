@@ -12,13 +12,16 @@ const int FILEPATH_MAX_LENGTH = 100;
 Screen* Screen_init(int width, int height) {
     Screen* ret = malloc(sizeof(Screen));
 
-    ret->canvas = al_create_bitmap(width, height);
+    ret->width = width;
+    ret->height = height;
+
+    ret->canvas = al_create_bitmap(ret->width, ret->height);
     if(!ret->canvas) {
         print_error("failed to create canvas.");
         exit(-1);
     }
 
-    ret->display = al_create_display(width, height);
+    ret->display = al_create_display(ret->width, ret->height);
     if(!ret->display) {
         print_error("failed to create display.");
         exit(-1);

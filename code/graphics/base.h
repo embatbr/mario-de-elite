@@ -12,6 +12,8 @@ Base functions and types for the game graphics.
 
 
 typedef struct {
+    int width;
+    int height;
     ALLEGRO_BITMAP* canvas;
     ALLEGRO_DISPLAY* display;
 } Screen;
