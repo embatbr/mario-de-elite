@@ -54,7 +54,7 @@ GameScenario* build_game_scenario(const char* phase) {
                 int width = atoi(strtok(NULL, " "));
 
                 Object2D* object2d = Object2D_init_2(x_pos, y_pos, width, 1, 0, 0, false);
-                *(game_objects + game_object_count) = GameObject_init(object2d);
+                *(game_objects + game_object_count) = GameObject_init(object2d, GAME_OBJECT_PLATFORM);
 
                 game_object_count++;
                 platform_count++;
@@ -76,7 +76,7 @@ GameScenario* build_game_scenario(const char* phase) {
                 int height = atoi(strtok(NULL, " "));
 
                 Object2D* object2d = Object2D_init_2(x_pos, y_pos, width, height, 0, 0, false);
-                *(game_objects + game_object_count) = GameObject_init(object2d);
+                *(game_objects + game_object_count) = GameObject_init(object2d, GAME_OBJECT_BLOCK);
 
                 game_object_count++;
                 block_count++;

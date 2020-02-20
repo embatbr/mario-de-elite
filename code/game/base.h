@@ -12,12 +12,18 @@ Base functions and types for the game (e.g., game objects).
 #endif
 
 
+typedef enum {
+    GAME_OBJECT_PLATFORM,
+    GAME_OBJECT_BLOCK,
+    GAME_OBJECT_SPRITED
+} GameObjectType;
+
 typedef struct {
     Object2D* object2d;
-    // TODO add enum to classify as platform, wall, block, player and etc...
+    GameObjectType type;
 } GameObject;
 
-GameObject* GameObject_init(Object2D* object2d);
+GameObject* GameObject_init(Object2D* object2d, GameObjectType type);
 
 
 typedef struct {

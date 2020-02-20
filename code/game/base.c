@@ -3,10 +3,11 @@
 #include "base.h"
 
 
-GameObject* GameObject_init(Object2D* object2d) {
+GameObject* GameObject_init(Object2D* object2d, GameObjectType type) {
     GameObject* ret = malloc(sizeof(GameObject));
 
     ret->object2d = object2d;
+    ret->type = type;
 
     return ret;
 }
@@ -15,7 +16,7 @@ GameObject* GameObject_init(Object2D* object2d) {
 SpritedGameObject* SpritedGameObject_init(Object2D* object2d, const char* filename) {
     SpritedGameObject* ret = malloc(sizeof(SpritedGameObject));
 
-    ret->game_object = GameObject_init(object2d);
+    ret->game_object = GameObject_init(object2d, GAME_OBJECT_SPRITED);
     ret->graphic_object = GraphicObject_init(filename);
 
     return ret;

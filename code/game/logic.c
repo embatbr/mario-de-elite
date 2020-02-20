@@ -34,11 +34,27 @@ void draw_game_play(GamePlay* game_play, const int mario_draw_flags) {
         int x_right_inf = position->x_axis + collision_box->width;
         int y_right_inf = position->y_axis + collision_box->height;
 
-        al_draw_filled_rectangle(x_left_sup, y_left_sup, x_right_inf, y_right_inf,
-            BASE_COLOR_RED);
+        if(game_object->type == GAME_OBJECT_SPRITED) {
+            al_draw_rectangle(x_left_sup, y_left_sup, x_right_inf, y_right_inf,
+                BASE_COLOR_BLACK, 1);
+        }
+        else {
+            if(game_object->type == GAME_OBJECT_PLATFORM) {
+                al_draw_filled_rectangle(x_left_sup, y_left_sup, x_right_inf, y_right_inf,
+                    BASE_COLOR_RED);
+            }
+            else if(game_object->type == GAME_OBJECT_BLOCK) {
+                al_draw_rectangle(x_left_sup, y_left_sup, x_right_inf, y_right_inf,
+                    BASE_COLOR_BLUE, 1);
+            }
+
+        }
     }
 
     Point2D* position = mario->game_object->object2d->position;
+    Box2D* collision_box = mario->game_object->object2d->collision_box;
+    al_draw_rectangle(position->x_axis, position->y_axis, position->x_axis + collision_box->width,
+        position->y_axis + collision_box->height, BASE_COLOR_BLACK, 1);
     paint_screen(screen, mario->graphic_object, position->x_axis, position->y_axis,
                  mario_draw_flags);
 
