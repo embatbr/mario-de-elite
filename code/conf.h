@@ -1,0 +1,12 @@
+#pragma once
+
+
+#define FPS 25
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+
+#define RESOURCES_DIRPATH "resources"
+#define IMAGES_DIRPATH RESOURCES_DIRPATH "/images"
+#define GAME_DIRPATH RESOURCES_DIRPATH "/game"
+
+#define FILEPATH_MAX_LENGTH 100

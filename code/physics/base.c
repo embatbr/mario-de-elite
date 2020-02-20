@@ -33,12 +33,11 @@ Speed2D* Speed2D_init(int x_axis, int y_axis) {
 }
 
 
-Object2D* Object2D_init(Point2D* position, Box2D* collision_box, Speed2D* speed,
-                        bool has_gravity) {
+Object2D* Object2D_init(Point2D* position, Box2D* box, Speed2D* speed, bool has_gravity) {
     Object2D* ret = malloc(sizeof(Object2D));
 
     ret->position = position;
-    ret->collision_box = collision_box;
+    ret->box = box;
     ret->speed = speed;
     ret->has_gravity = has_gravity;
 
@@ -51,13 +50,13 @@ Object2D* Object2D_init_2(int x_pos, int y_pos, int width, int height, int x_spe
     position->x_axis = x_pos;
     position->y_axis = y_pos;
 
-    Box2D* collision_box = malloc(sizeof(Box2D));
-    collision_box->width = width;
-    collision_box->height = height;
+    Box2D* box = malloc(sizeof(Box2D));
+    box->width = width;
+    box->height = height;
 
     Speed2D* speed = malloc(sizeof(Speed2D));
     speed->x_axis = x_speed;
     speed->y_axis = y_speed;
 
-    return Object2D_init(position, collision_box, speed, has_gravity);
+    return Object2D_init(position, box, speed, has_gravity);
 }

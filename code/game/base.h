@@ -4,12 +4,9 @@
 Base functions and types for the game (e.g., game objects).
 */
 
-#ifndef PHYSICS_BASE_H
-    #include "../physics/base.h"
-#endif
-#ifndef GRAPHICS_BASE_H
-    #include "../graphics/base.h"
-#endif
+#include "../controllers/base.h"
+#include "../graphics/base.h"
+#include "../physics/base.h"
 
 
 typedef enum {
@@ -48,7 +45,8 @@ typedef struct {
     GameScenario* scenario;
     SpritedGameObject* mario;
     Point2D* mouse_position;
+    Keyboard* keyboard;
 } GamePlay;
 
 GamePlay* GamePlay_init(Screen* screen, GraphicObject* background, GameScenario* scenario,
-                        SpritedGameObject* mario, Point2D* mouse_position);
+                        SpritedGameObject* mario, Point2D* mouse_position, Keyboard* keyboard);

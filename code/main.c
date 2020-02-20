@@ -4,24 +4,19 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 
-#include "physics/base.h"
+#include "conf.h"
 #include "game/base.h"
 #include "game/logic.h"
 #include "graphics/base.h"
 #include "graphics/drawing.h"
 #include "logging.h"
-
-
-const float FPS = 25;
+#include "physics/base.h"
 
 
 ALLEGRO_TIMER* timer;
 ALLEGRO_EVENT_QUEUE* event_queue;
 
 
-/**
-Initialize Allegro and all devices associated (keyboards, timers, displays...).
-*/
 int init_allegro_devices() {
     if(!al_init()) {
         print_error("failed to initialize allegro!");
@@ -63,6 +58,7 @@ int init_allegro_devices() {
 
     return 0;
 }
+
 
 void deinit_allegro_devices() {
     al_destroy_timer(timer);

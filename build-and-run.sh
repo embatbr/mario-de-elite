@@ -14,9 +14,10 @@ fi
 gcc \
     -std=c99 \
     code/main.c code/logging.c \
-    code/physics/base.c \
+    code/controllers/base.c code/controllers/logic.c \
     code/game/base.c code/game/building.c code/game/logic.c \
     code/graphics/base.c code/graphics/drawing.c \
+    code/physics/base.c \
     -o ${EXEC_FILENAME} \
     $(pkg-config --libs allegro-5 allegro_image-5 allegro_primitives-5)
 

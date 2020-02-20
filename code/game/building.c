@@ -2,19 +2,16 @@
 #include <stdlib.h>
 
 #include "building.h"
-
-
-const char* RESOURCES_GAME_DIRPATH = "resources/game";
+#include "../conf.h"
 
 
 GameScenario* build_game_scenario(const char* phase) {
-    const int FILEPATH_MAX_LENGTH = 100;
     const int LINE_MAX_LENGTH = 100;
 
     char line[LINE_MAX_LENGTH];
 
     char* filepath = malloc(sizeof(char) * FILEPATH_MAX_LENGTH);
-    snprintf(filepath, FILEPATH_MAX_LENGTH, "%s/%s", RESOURCES_GAME_DIRPATH, phase);
+    snprintf(filepath, FILEPATH_MAX_LENGTH, "%s/%s", GAME_DIRPATH, phase);
 
     char* stage = "reading file";
 

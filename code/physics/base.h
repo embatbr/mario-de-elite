@@ -1,7 +1,7 @@
 #pragma once
 
 /**
-Base functions and types to work with physics (e.g., collision boxes).
+Base functions and types to work with physics.
 */
 
 #include <stdbool.h>
@@ -33,13 +33,12 @@ Speed2D* Speed2D_init(int x_axis, int y_axis);
 
 typedef struct {
     Point2D* position;
-    Box2D* collision_box;
+    Box2D* box;
     Speed2D* speed;
     bool has_gravity;
 } Object2D;
 
-Object2D* Object2D_init(Point2D* position, Box2D* collision_box, Speed2D* speed,
-                        bool has_gravity);
+Object2D* Object2D_init(Point2D* position, Box2D* box, Speed2D* speed, bool has_gravity);
 
 Object2D* Object2D_init_2(int x_pos, int y_pos, int width, int height, int x_speed,
                           int y_speed, bool has_gravity);

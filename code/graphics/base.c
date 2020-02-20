@@ -2,10 +2,8 @@
 #include <stdlib.h>
 
 #include "base.h"
+#include "../conf.h"
 #include "../logging.h"
-
-
-const char* RESOURCES_IMAGES_DIRPATH = "resources/images";
 
 
 Screen* Screen_init(int width, int height) {
@@ -31,12 +29,10 @@ Screen* Screen_init(int width, int height) {
 
 
 GraphicObject* GraphicObject_init(const char* filename){
-    const int FILEPATH_MAX_LENGTH = 100;
-
     GraphicObject* ret = malloc(sizeof(GraphicObject));
 
     char* filepath = malloc(sizeof(char) * FILEPATH_MAX_LENGTH);
-    snprintf(filepath, FILEPATH_MAX_LENGTH, "%s/%s", RESOURCES_IMAGES_DIRPATH, filename);
+    snprintf(filepath, FILEPATH_MAX_LENGTH, "%s/%s", IMAGES_DIRPATH, filename);
 
     ret->image = al_load_bitmap(filepath);
     if(!ret->image) {
