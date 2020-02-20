@@ -76,8 +76,7 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
     Speed2D* mario_speed = game_play->mario->game_object->object2d->speed;
     mario_speed->x_axis = mario_speed->y_axis = 0;
 
-    bool paused = false;
-    bool redraw = true;
+    bool running = true;
     int mario_draw_flags = 0;
 
     draw_game_play(game_play, mario_draw_flags);
@@ -89,7 +88,7 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
         al_wait_for_event(event_queue, &ev);
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
-            if(!paused) {
+            if(running) {
                 mario_speed->x_axis = MARIO_X_SPEED * direction_h(keyboard);
                 mario_speed->y_axis = MARIO_Y_SPEED * direction_v(keyboard);
 
@@ -114,7 +113,7 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
                 mario_speed->y_axis = 0;
             }
 
-            redraw = true;
+            draw_game_play(game_play, mario_draw_flags); // may update canvas even when paused
         }
 
         if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
@@ -126,7 +125,7 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
                 break;
             }
             if(ev.keyboard.keycode == KEY_PAUSE) { // ENTER
-                paused = !paused;
+                running = !running;
             }
 
             if(ev.keyboard.keycode == KEY_LEFT) {
@@ -157,7 +156,7 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
             }
         }
 
-        if(!paused && (ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY ||
+        if(running && (ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY ||
                             ev.type == ALLEGRO_EVENT_MOUSE_AXES)) {
             game_play->mouse_position->x_axis = ev.mouse.x;
             game_play->mouse_position->y_axis = ev.mouse.y;
@@ -170,17 +169,9 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
                 mario_draw_flags = mario_draw_flags ^ ALLEGRO_FLIP_HORIZONTAL;
             }
         }
-        if(!paused && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+        if(running && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
             mario_position->x_axis = ev.mouse.x;
             mario_position->y_axis = ev.mouse.y;
-        }
-
-        // mario_speed->x_axis = MARIO_X_SPEED * direction_h(keyboard);
-        // mario_speed->y_axis = MARIO_Y_SPEED * direction_v(keyboard);
-
-        if(redraw && al_is_event_queue_empty(event_queue)) {
-            redraw = false;
-            draw_game_play(game_play, mario_draw_flags);
         }
     }
 }
