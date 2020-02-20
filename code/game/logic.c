@@ -113,51 +113,38 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
                 mario_speed->y_axis = 0;
             }
 
-            draw_game_play(game_play, mario_draw_flags); // may update canvas even when paused
+            draw_game_play(game_play, mario_draw_flags); // updates canvas even when paused
         }
 
         if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
             break;
         }
 
-        if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-            if(ev.keyboard.keycode == KEY_EXIT) { // ESC
+        if(ev.type == ALLEGRO_EVENT_KEY_DOWN || ev.type == ALLEGRO_EVENT_KEY_UP) {
+            bool key_is_down = ev.type == ALLEGRO_EVENT_KEY_DOWN;
+
+            if(key_is_down && ev.keyboard.keycode == KEY_EXIT) {
                 break;
             }
-            if(ev.keyboard.keycode == KEY_PAUSE) { // ENTER
+            if(key_is_down && ev.keyboard.keycode == KEY_PAUSE) {
                 running = !running;
             }
 
             if(ev.keyboard.keycode == KEY_LEFT) {
-                keyboard->key_left_pressed = true;
+                keyboard->key_left_pressed = key_is_down;
             }
             if(ev.keyboard.keycode == KEY_RIGHT) {
-                keyboard->key_right_pressed = true;
+                keyboard->key_right_pressed = key_is_down;
             }
             if(ev.keyboard.keycode == KEY_UP) {
-                keyboard->key_up_pressed = true;
+                keyboard->key_up_pressed = key_is_down;
             }
             if(ev.keyboard.keycode == KEY_DOWN) {
-                keyboard->key_down_pressed = true;
-            }
-        }
-        if(ev.type == ALLEGRO_EVENT_KEY_UP) {
-            if(ev.keyboard.keycode == KEY_LEFT) {
-                keyboard->key_left_pressed = false;
-            }
-            if(ev.keyboard.keycode == KEY_RIGHT) {
-                keyboard->key_right_pressed = false;
-            }
-            if(ev.keyboard.keycode == KEY_UP) {
-                keyboard->key_up_pressed = false;
-            }
-            if(ev.keyboard.keycode == KEY_DOWN) {
-                keyboard->key_down_pressed = false;
+                keyboard->key_down_pressed = key_is_down;
             }
         }
 
-        if(running && (ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY ||
-                            ev.type == ALLEGRO_EVENT_MOUSE_AXES)) {
+        if(running && ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
             game_play->mouse_position->x_axis = ev.mouse.x;
             game_play->mouse_position->y_axis = ev.mouse.y;
 
@@ -168,10 +155,6 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
             else if(mario_draw_flags & ALLEGRO_FLIP_HORIZONTAL == ALLEGRO_FLIP_HORIZONTAL){
                 mario_draw_flags = mario_draw_flags ^ ALLEGRO_FLIP_HORIZONTAL;
             }
-        }
-        if(running && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-            mario_position->x_axis = ev.mouse.x;
-            mario_position->y_axis = ev.mouse.y;
         }
     }
 }
