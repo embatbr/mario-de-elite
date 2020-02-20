@@ -14,13 +14,18 @@ Base functions and types for the game (e.g., game objects).
 
 typedef struct {
     Object2D* object2d;
-    GraphicObject* graphic_object;
+    // TODO add enum to classify as platform, wall, block, player and etc...
 } GameObject;
 
-GameObject* GameObject_init(Object2D* object2d, const char* filename);
+GameObject* GameObject_init(Object2D* object2d);
 
 
-// TODO create types 'GamePlatform' and 'GameWall', referencing 'GameObject'
+typedef struct {
+    GameObject* game_object;
+    GraphicObject* graphic_object;
+} SpritedGameObject;
+
+SpritedGameObject* SpritedGameObject_init(Object2D* object2d, const char* filename);
 
 
 typedef struct {
@@ -28,16 +33,16 @@ typedef struct {
     GameObject** game_objects;
 } GameScenario;
 
-GameScenario* GameScenario_init(int num_game_objects);
+GameScenario* GameScenario_init(int num_game_objects, GameObject** game_objects);
 
 
 typedef struct {
     Screen* screen;
     GraphicObject* background;
     GameScenario* scenario;
-    GameObject* mario;
+    SpritedGameObject* mario;
     Point2D* mouse_position;
 } GamePlay;
 
 GamePlay* GamePlay_init(Screen* screen, GraphicObject* background, GameScenario* scenario,
-                        GameObject* mario, Point2D* mouse_position);
+                        SpritedGameObject* mario, Point2D* mouse_position);

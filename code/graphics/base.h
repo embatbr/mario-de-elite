@@ -9,6 +9,9 @@ Base functions and types for the game graphics.
 
 #define BASE_COLOR_WHITE al_map_rgb(255, 255, 255)
 #define BASE_COLOR_BLACK al_map_rgb(0, 0, 0)
+#define BASE_COLOR_RED al_map_rgb(255, 0, 0)
+#define BASE_COLOR_GREEN al_map_rgb(0, 255, 0)
+#define BASE_COLOR_BLUE al_map_rgb(0, 0, 255)
 
 
 typedef struct {
