@@ -35,15 +35,15 @@ GameScenario* GameScenario_init(int num_game_objects, GameObject** game_objects)
 
 
 GamePlay* GamePlay_init(Screen* screen, GraphicObject* background, GameScenario* scenario,
-                        SpritedGameObject* mario, Point2D* mouse_position, Keyboard* keyboard) {
+                        SpritedGameObject* mario, Controllers* controllers) {
     GamePlay* ret = malloc(sizeof(GamePlay));
 
     ret->screen = screen;
     ret->background = background;
     ret->scenario = scenario;
     ret->mario = mario;
-    ret->mouse_position = mouse_position;
-    ret->keyboard = keyboard;
+    ret->controllers = controllers;
+    ret->state = STARTING;
 
     return ret;
 }

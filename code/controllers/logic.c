@@ -12,9 +12,6 @@ void capture_keyboard_event(ALLEGRO_EVENT ev, Keyboard* keyboard) {
     if(key_is_down || key_is_up) {
         int keycode = ev.keyboard.keycode;
 
-        if(keycode == KEY_EXIT) {
-            keyboard->key_exit_pressed = key_is_down;
-        }
         if(keycode == KEY_PAUSE) {
             keyboard->key_pause_pressed = key_is_down;
         }
@@ -33,7 +30,6 @@ void capture_keyboard_event(ALLEGRO_EVENT ev, Keyboard* keyboard) {
     }
 }
 
-
 int direction_by_key(bool negative_key, bool positive_key) {
     if(negative_key && !positive_key) {
         return -1;
@@ -51,4 +47,40 @@ int direction_h(Keyboard* keyboard) {
 
 int direction_v(Keyboard* keyboard) {
     return direction_by_key(keyboard->key_up_pressed, keyboard->key_down_pressed);
+}
+
+
+void capture_mouse_event(ALLEGRO_EVENT ev, Mouse* mouse) {
+    if(ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY) {
+        mouse->inside_display = true;
+    }
+    if(ev.type == ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY) {
+        mouse->inside_display = false;
+    }
+
+    if(mouse->inside_display) {
+        bool button_is_down = (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN);
+        bool button_is_up = (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP);
+        if(button_is_down || button_is_up) {
+            int button = ev.mouse.button;
+
+            if(button == BUTTON_LEFT) {
+                bool prev_value = mouse->button_left_pressed;
+                mouse->button_left_pressed = button_is_down ? true : (button_is_up ? false : prev_value);
+            }
+            if(button == BUTTON_RIGHT) {
+                bool prev_value = mouse->button_right_pressed;
+                mouse->button_right_pressed = button_is_down ? true : (button_is_up ? false : prev_value);
+            }
+            if(button == BUTTON_MIDDLE) {
+                bool prev_value = mouse->button_middle_pressed;
+                mouse->button_middle_pressed = button_is_down ? true : (button_is_up ? false : prev_value);
+            }
+        }
+
+        if(ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
+            mouse->position->x_axis = ev.mouse.x;
+            mouse->position->y_axis = ev.mouse.y;
+        }
+    }
 }

@@ -39,14 +39,21 @@ typedef struct {
 GameScenario* GameScenario_init(int num_game_objects, GameObject** game_objects);
 
 
+typedef enum {
+    STARTING,
+    RUNNING,
+    PAUSED,
+    TERMINATED
+} GAME_STATE;
+
 typedef struct {
     Screen* screen;
     GraphicObject* background;
     GameScenario* scenario;
     SpritedGameObject* mario;
-    Point2D* mouse_position;
-    Keyboard* keyboard;
+    Controllers* controllers;
+    GAME_STATE state;
 } GamePlay;
 
 GamePlay* GamePlay_init(Screen* screen, GraphicObject* background, GameScenario* scenario,
-                        SpritedGameObject* mario, Point2D* mouse_position, Keyboard* keyboard);
+                        SpritedGameObject* mario, Controllers* controllers);
