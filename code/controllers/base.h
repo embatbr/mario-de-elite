@@ -39,7 +39,7 @@ typedef struct {
     bool button_middle_pressed;
 } Mouse;
 
-Mouse* Mouse_init();
+Mouse* Mouse_init(int x_pos, int y_pos);
 
 
 typedef struct {
@@ -47,4 +47,4 @@ typedef struct {
     Mouse* mouse;
 } Controllers;
 
-Controllers* Controllers_init();
+Controllers* Controllers_init(int mouse_x_pos, int mouse_y_pos);

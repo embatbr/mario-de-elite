@@ -16,11 +16,12 @@ Keyboard* Keyboard_init() {
 }
 
 
-Mouse* Mouse_init() {
+Mouse* Mouse_init(int x_pos, int y_pos) {
     Mouse* ret = malloc(sizeof(Mouse));
 
-    ret->inside_display = false;
-    ret->position = Point2D_init(0, 0);
+    // ret->inside_display = false;
+    ret->inside_display = true;
+    ret->position = Point2D_init(x_pos, y_pos);
     ret->button_left_pressed = false;
     ret->button_right_pressed = false;
     ret->button_middle_pressed = false;
@@ -29,11 +30,11 @@ Mouse* Mouse_init() {
 }
 
 
-Controllers* Controllers_init() {
+Controllers* Controllers_init(int mouse_x_pos, int mouse_y_pos) {
     Controllers* ret = malloc(sizeof(Controllers));
 
     ret->keyboard = Keyboard_init();
-    ret->mouse = Mouse_init();
+    ret->mouse = Mouse_init(mouse_x_pos, mouse_y_pos);
 
     return ret;
 }
