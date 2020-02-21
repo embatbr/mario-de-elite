@@ -40,5 +40,7 @@ GraphicObject* GraphicObject_init(const char* filename){
         exit(-1);
     }
 
+    ret->flags = 0;
+
     return ret;
 }

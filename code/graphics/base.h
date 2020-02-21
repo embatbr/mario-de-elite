@@ -26,6 +26,7 @@ Screen* Screen_init(int width, int height);
 
 typedef struct {
     ALLEGRO_BITMAP* image;
+    int flags;
 } GraphicObject;
 
 GraphicObject* GraphicObject_init(const char* filename);

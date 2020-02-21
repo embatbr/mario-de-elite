@@ -14,7 +14,43 @@ const int MARIO_WIDTH = 32;
 const int MARIO_HEIGHT = 42;
 
 
-void draw_game_play(GamePlay* game_play, const int mario_draw_flags) {
+// for tests only
+void draw_game_object(GameObject* game_object) {
+    Point2D* position = game_object->object2d->position;
+    Box2D* box = game_object->object2d->box;
+
+    int x_left_sup = position->x_axis - box->width/2;
+    int y_left_sup = position->y_axis - box->height/2;
+    int x_right_inf = position->x_axis + box->width/2;
+    int y_right_inf = position->y_axis + box->height/2;
+
+    ALLEGRO_COLOR color;
+    if(game_object->type == GAME_OBJECT_SPRITED) {
+        color = BASE_COLOR_BLACK;
+    }
+    else if(game_object->type == GAME_OBJECT_PLATFORM) {
+        color = BASE_COLOR_RED;
+    }
+    else if(game_object->type == GAME_OBJECT_BLOCK) {
+        color = BASE_COLOR_BLUE;
+    }
+    al_draw_rectangle(x_left_sup, y_left_sup, x_right_inf, y_right_inf, color, 1);
+}
+
+void draw_sprited_game_object(Screen* screen, SpritedGameObject* sprited_game_object) {
+    GameObject* game_object = sprited_game_object->game_object;
+    Point2D* position = game_object->object2d->position;
+    Box2D* box = game_object->object2d->box;
+
+    int x_left_sup = position->x_axis - box->width/2;
+    int y_left_sup = position->y_axis - box->height/2;
+
+    paint_screen(screen, sprited_game_object->graphic_object, x_left_sup, y_left_sup,
+        sprited_game_object->graphic_object->flags);
+    draw_game_object(game_object); // for tests only
+}
+
+void draw_game_play(GamePlay* game_play) {
     Screen* screen = game_play->screen;
     GraphicObject* background = game_play->background;
     GameScenario* scenario = game_play->scenario;
@@ -27,42 +63,15 @@ void draw_game_play(GamePlay* game_play, const int mario_draw_flags) {
     // draw on canvas
     paint_screen(screen, background, 0, 0, 0);
 
+    // for tests only
     for(int i = 0; i < scenario->num_game_objects; i++) {
         GameObject* game_object = *(scenario->game_objects + i);
-        Point2D* position = game_object->object2d->position;
-        Box2D* box = game_object->object2d->box;
-
-        int x_left_sup = position->x_axis;
-        int y_left_sup = position->y_axis;
-        int x_right_inf = position->x_axis + box->width;
-        int y_right_inf = position->y_axis + box->height;
-
-        if(game_object->type == GAME_OBJECT_SPRITED) {
-            al_draw_rectangle(x_left_sup, y_left_sup, x_right_inf, y_right_inf,
-                BASE_COLOR_BLACK, 1);
-        }
-        else if(game_object->type == GAME_OBJECT_PLATFORM) {
-            al_draw_filled_rectangle(x_left_sup, y_left_sup, x_right_inf, y_right_inf,
-                BASE_COLOR_RED);
-        }
-        else if(game_object->type == GAME_OBJECT_BLOCK) {
-            al_draw_rectangle(x_left_sup, y_left_sup, x_right_inf, y_right_inf,
-                BASE_COLOR_BLUE, 1);
-        }
+        draw_game_object(game_object);
     }
 
-    Point2D* position = mario->game_object->object2d->position;
-    Box2D* box = mario->game_object->object2d->box;
-
-    int x_left_sup = position->x_axis - box->width/2;
-    int y_left_sup = position->y_axis - box->height/2;
-    int x_right_inf = position->x_axis + box->width/2;
-    int y_right_inf = position->y_axis + box->height/2;
-
-    paint_screen(screen, mario->graphic_object, x_left_sup, y_left_sup, mario_draw_flags);
+    draw_sprited_game_object(screen, mario);
 
     // for tests only
-    al_draw_rectangle(x_left_sup, y_left_sup, x_right_inf, y_right_inf, BASE_COLOR_BLACK, 1);
     al_draw_filled_circle(mouse_position->x_axis, mouse_position->y_axis, 5, BASE_COLOR_BLACK);
     al_draw_circle(mouse_position->x_axis, mouse_position->y_axis, 15, BASE_COLOR_BLACK, 2);
 
@@ -83,9 +92,8 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
 
     bool in_game = true;
     bool running = true;
-    int mario_draw_flags = 0;
 
-    draw_game_play(game_play, mario_draw_flags);
+    draw_game_play(game_play);
 
     al_start_timer(timer);
 
@@ -121,9 +129,7 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
                 mario_speed->y_axis = 0;
             }
 
-            printf("(%d, %d)\n", mario_position->x_axis, mario_position->y_axis);
-
-            draw_game_play(game_play, mario_draw_flags); // updates canvas even when paused
+            draw_game_play(game_play); // updates canvas even when paused
         }
 
         if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
@@ -136,12 +142,11 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
             game_play->mouse_position->x_axis = ev.mouse.x;
             game_play->mouse_position->y_axis = ev.mouse.y;
 
-            if(ev.mouse.x < (mario_position->x_axis +
-               mario->game_object->object2d->box->width/2)) {
-                mario_draw_flags = mario_draw_flags | ALLEGRO_FLIP_HORIZONTAL;
+            if(ev.mouse.x < mario_position->x_axis) {
+                mario->graphic_object->flags = mario->graphic_object->flags | ALLEGRO_FLIP_HORIZONTAL;
             }
-            else if(mario_draw_flags & ALLEGRO_FLIP_HORIZONTAL == ALLEGRO_FLIP_HORIZONTAL){
-                mario_draw_flags = mario_draw_flags ^ ALLEGRO_FLIP_HORIZONTAL;
+            else if(mario->graphic_object->flags & ALLEGRO_FLIP_HORIZONTAL == ALLEGRO_FLIP_HORIZONTAL){
+                mario->graphic_object->flags = mario->graphic_object->flags ^ ALLEGRO_FLIP_HORIZONTAL;
             }
         }
         if(running && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
