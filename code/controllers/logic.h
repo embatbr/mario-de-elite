@@ -7,7 +7,8 @@ Contains the logic for controlling.
 #include "base.h"
 
 
-int direction_by_key(bool negative_key, bool positive_key);
+void capture_keyboard_event(ALLEGRO_EVENT ev, Keyboard* keyboard);
+
 
 int direction_h(Keyboard* keyboard);
 

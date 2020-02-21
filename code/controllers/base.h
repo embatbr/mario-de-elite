@@ -17,6 +17,8 @@ Base functions and types for game controlling (keyboard and mouse).
 
 
 typedef struct {
+    bool key_exit_pressed;
+    bool key_pause_pressed;
     bool key_left_pressed;
     bool key_right_pressed;
     bool key_up_pressed;

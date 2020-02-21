@@ -53,11 +53,16 @@ void draw_game_play(GamePlay* game_play, const int mario_draw_flags) {
 
     Point2D* position = mario->game_object->object2d->position;
     Box2D* box = mario->game_object->object2d->box;
-    al_draw_rectangle(position->x_axis, position->y_axis, position->x_axis + box->width,
-        position->y_axis + box->height, BASE_COLOR_BLACK, 1);
-    paint_screen(screen, mario->graphic_object, position->x_axis, position->y_axis,
-                 mario_draw_flags);
 
+    int x_left_sup = position->x_axis - box->width/2;
+    int y_left_sup = position->y_axis - box->height/2;
+    int x_right_inf = position->x_axis + box->width/2;
+    int y_right_inf = position->y_axis + box->height/2;
+
+    paint_screen(screen, mario->graphic_object, x_left_sup, y_left_sup, mario_draw_flags);
+
+    // for tests only
+    al_draw_rectangle(x_left_sup, y_left_sup, x_right_inf, y_right_inf, BASE_COLOR_BLACK, 1);
     al_draw_filled_circle(mouse_position->x_axis, mouse_position->y_axis, 5, BASE_COLOR_BLACK);
     al_draw_circle(mouse_position->x_axis, mouse_position->y_axis, 15, BASE_COLOR_BLACK, 2);
 
@@ -76,6 +81,7 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
     Speed2D* mario_speed = game_play->mario->game_object->object2d->speed;
     mario_speed->x_axis = mario_speed->y_axis = 0;
 
+    bool in_game = true;
     bool running = true;
     int mario_draw_flags = 0;
 
@@ -83,11 +89,13 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
 
     al_start_timer(timer);
 
-    while(1) {
+    while(in_game) {
         ALLEGRO_EVENT ev;
         al_wait_for_event(event_queue, &ev);
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
+            in_game = keyboard->key_exit_pressed;
+
             if(running) {
                 mario_speed->x_axis = MARIO_X_SPEED * direction_h(keyboard);
                 mario_speed->y_axis = MARIO_Y_SPEED * direction_v(keyboard);
@@ -95,54 +103,34 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
                 mario_position->x_axis += mario_speed->x_axis;
                 mario_position->y_axis += mario_speed->y_axis;
 
-                if(mario_position->x_axis < 0) {
-                    mario_position->x_axis = 0;
+                if(mario_position->x_axis < mario_box->width/2) {
+                    mario_position->x_axis = mario_box->width/2;
                 }
-                else if(mario_position->x_axis > screen->width - mario_box->width) {
-                    mario_position->x_axis = screen->width - mario_box->width;
+                else if(mario_position->x_axis > screen->width - mario_box->width/2) {
+                    mario_position->x_axis = screen->width - mario_box->width/2;
                 }
 
-                if(mario_position->y_axis < 0) {
-                    mario_position->y_axis = 0;
+                if(mario_position->y_axis < mario_box->height/2) {
+                    mario_position->y_axis = mario_box->height/2;
                 }
-                else if(mario_position->y_axis > screen->height - mario_box->height) {
-                    mario_position->y_axis = screen->height - mario_box->height;
+                else if(mario_position->y_axis > screen->height - mario_box->height/2) {
+                    mario_position->y_axis = screen->height - mario_box->height/2;
                 }
 
                 mario_speed->x_axis = 0;
                 mario_speed->y_axis = 0;
             }
 
+            printf("(%d, %d)\n", mario_position->x_axis, mario_position->y_axis);
+
             draw_game_play(game_play, mario_draw_flags); // updates canvas even when paused
         }
 
         if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-            break;
+            in_game = false;
         }
 
-        if(ev.type == ALLEGRO_EVENT_KEY_DOWN || ev.type == ALLEGRO_EVENT_KEY_UP) {
-            bool key_is_down = ev.type == ALLEGRO_EVENT_KEY_DOWN;
-
-            if(key_is_down && ev.keyboard.keycode == KEY_EXIT) {
-                break;
-            }
-            if(key_is_down && ev.keyboard.keycode == KEY_PAUSE) {
-                running = !running;
-            }
-
-            if(ev.keyboard.keycode == KEY_LEFT) {
-                keyboard->key_left_pressed = key_is_down;
-            }
-            if(ev.keyboard.keycode == KEY_RIGHT) {
-                keyboard->key_right_pressed = key_is_down;
-            }
-            if(ev.keyboard.keycode == KEY_UP) {
-                keyboard->key_up_pressed = key_is_down;
-            }
-            if(ev.keyboard.keycode == KEY_DOWN) {
-                keyboard->key_down_pressed = key_is_down;
-            }
-        }
+        capture_keyboard_event(ev, keyboard);
 
         if(running && ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
             game_play->mouse_position->x_axis = ev.mouse.x;
@@ -155,6 +143,10 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
             else if(mario_draw_flags & ALLEGRO_FLIP_HORIZONTAL == ALLEGRO_FLIP_HORIZONTAL){
                 mario_draw_flags = mario_draw_flags ^ ALLEGRO_FLIP_HORIZONTAL;
             }
+        }
+        if(running && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+            mario_position->x_axis = ev.mouse.x;
+            mario_position->y_axis = ev.mouse.y;
         }
     }
 }
