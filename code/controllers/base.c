@@ -15,6 +15,10 @@ Keyboard* Keyboard_init() {
     return ret;
 }
 
+void Keyboard_del(Keyboard* param) {
+    free(param);
+}
+
 
 Mouse* Mouse_init(int x_pos, int y_pos) {
     Mouse* ret = malloc(sizeof(Mouse));
@@ -29,6 +33,11 @@ Mouse* Mouse_init(int x_pos, int y_pos) {
     return ret;
 }
 
+void Mouse_del(Mouse* param) {
+    Point2D_del(param->position);
+    free(param);
+}
+
 
 Controllers* Controllers_init(int mouse_x_pos, int mouse_y_pos) {
     Controllers* ret = malloc(sizeof(Controllers));
@@ -37,4 +46,10 @@ Controllers* Controllers_init(int mouse_x_pos, int mouse_y_pos) {
     ret->mouse = Mouse_init(mouse_x_pos, mouse_y_pos);
 
     return ret;
+}
+
+void Controllers_del(Controllers* param) {
+    Keyboard_del(param->keyboard);
+    Mouse_del(param->mouse);
+    free(param);
 }

@@ -12,6 +12,11 @@ GameObject* GameObject_init(Object2D* object2d, GameObjectType type) {
     return ret;
 }
 
+void GameObject_del(GameObject* param) {
+    Object2D_del(param->object2d);
+    free(param);
+}
+
 
 SpritedGameObject* SpritedGameObject_init(Object2D* object2d, const char* filename) {
     SpritedGameObject* ret = malloc(sizeof(SpritedGameObject));
@@ -22,8 +27,13 @@ SpritedGameObject* SpritedGameObject_init(Object2D* object2d, const char* filena
     return ret;
 }
 
+void SpritedGameObject_del(SpritedGameObject* param) {
+    GameObject_del(param->game_object);
+    GraphicObject_del(param->graphic_object);
+    free(param);
+}
 
-// TODO remove the fixed positions (tests only)
+
 GameScenario* GameScenario_init(int num_game_objects, GameObject** game_objects) {
     GameScenario* ret = malloc(sizeof(GameScenario));
 
@@ -31,6 +41,14 @@ GameScenario* GameScenario_init(int num_game_objects, GameObject** game_objects)
     ret->game_objects = game_objects;
 
     return ret;
+}
+
+void GameScenario_del(GameScenario* param) {
+    for(int i = 0; i < param->num_game_objects; i++) {
+        GameObject_del(*(param->game_objects + i));
+    }
+    free(param->game_objects);
+    free(param);
 }
 
 
@@ -46,4 +64,13 @@ GamePlay* GamePlay_init(Screen* screen, GraphicObject* background, GameScenario*
     ret->state = STARTING;
 
     return ret;
+}
+
+void GamePlay_del(GamePlay* param) {
+    Screen_del(param->screen);
+    GraphicObject_del(param->background);
+    GameScenario_del(param->scenario);
+    SpritedGameObject_del(param->mario);
+    Controllers_del(param->controllers);
+    free(param);
 }

@@ -27,6 +27,12 @@ Screen* Screen_init(int width, int height) {
     return ret;
 }
 
+void Screen_del(Screen* param) {
+    al_destroy_bitmap(param->canvas);
+    al_destroy_display(param->display);
+    free(param);
+}
+
 
 GraphicObject* GraphicObject_init(const char* filename){
     GraphicObject* ret = malloc(sizeof(GraphicObject));
@@ -43,4 +49,9 @@ GraphicObject* GraphicObject_init(const char* filename){
     ret->flags = 0;
 
     return ret;
+}
+
+void GraphicObject_del(GraphicObject* param) {
+    al_destroy_bitmap(param->image);
+    free(param);
 }

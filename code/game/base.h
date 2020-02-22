@@ -22,6 +22,8 @@ typedef struct {
 
 GameObject* GameObject_init(Object2D* object2d, GameObjectType type);
 
+void GameObject_del(GameObject* param);
+
 
 typedef struct {
     GameObject* game_object;
@@ -30,6 +32,8 @@ typedef struct {
 
 SpritedGameObject* SpritedGameObject_init(Object2D* object2d, const char* filename);
 
+void SpritedGameObject_del(SpritedGameObject* param);
+
 
 typedef struct {
     int num_game_objects;
@@ -37,6 +41,8 @@ typedef struct {
 } GameScenario;
 
 GameScenario* GameScenario_init(int num_game_objects, GameObject** game_objects);
+
+void GameScenario_del(GameScenario* param);
 
 
 typedef enum {
@@ -57,3 +63,5 @@ typedef struct {
 
 GamePlay* GamePlay_init(Screen* screen, GraphicObject* background, GameScenario* scenario,
                         SpritedGameObject* mario, Controllers* controllers);
+
+void GamePlay_del(GamePlay* param);

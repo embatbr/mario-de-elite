@@ -23,6 +23,8 @@ typedef struct {
 
 Screen* Screen_init(int width, int height);
 
+void Screen_del(Screen* param);
+
 
 typedef struct {
     ALLEGRO_BITMAP* image;
@@ -30,3 +32,5 @@ typedef struct {
 } GraphicObject;
 
 GraphicObject* GraphicObject_init(const char* filename);
+
+void GraphicObject_del(GraphicObject* param);

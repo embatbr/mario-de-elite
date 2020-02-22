@@ -80,6 +80,22 @@ void draw_game_play(GamePlay* game_play) {
 }
 
 
+GamePlay* create_game() {
+    GameScenario* game_scenario = build_game_scenario("phase-01");
+
+    return GamePlay_init(
+        Screen_init(SCREEN_WIDTH, SCREEN_HEIGHT),
+        GraphicObject_init("backgrounds/01.png"),
+        game_scenario,
+        SpritedGameObject_init(
+            Object2D_init_2(100, 100, MARIO_WIDTH, MARIO_HEIGHT, 0, 0, true),
+            "player/mario.png"
+        ),
+        Controllers_init(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    );
+}
+
+
 void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay* game_play) {
     Screen* screen = game_play->screen;
     SpritedGameObject* mario = game_play->mario;
@@ -154,20 +170,4 @@ void main_loop(ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, GamePlay*
         capture_keyboard_event(ev, keyboard);
         capture_mouse_event(ev, mouse);
     }
-}
-
-
-GamePlay* create_game() {
-    GameScenario* game_scenario = build_game_scenario("phase-01");
-
-    return GamePlay_init(
-        Screen_init(SCREEN_WIDTH, SCREEN_HEIGHT),
-        GraphicObject_init("backgrounds/01.png"),
-        game_scenario,
-        SpritedGameObject_init(
-            Object2D_init_2(100, 100, MARIO_WIDTH, MARIO_HEIGHT, 0, 0, true),
-            "player/mario.png"
-        ),
-        Controllers_init(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-    );
 }

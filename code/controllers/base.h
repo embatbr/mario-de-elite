@@ -26,6 +26,8 @@ typedef struct {
 
 Keyboard* Keyboard_init();
 
+void Keyboard_del(Keyboard* param);
+
 
 #define BUTTON_LEFT 1
 #define BUTTON_RIGHT 2
@@ -41,6 +43,8 @@ typedef struct {
 
 Mouse* Mouse_init(int x_pos, int y_pos);
 
+void Mouse_del(Mouse* param);
+
 
 typedef struct {
     Keyboard* keyboard;
@@ -48,3 +52,5 @@ typedef struct {
 } Controllers;
 
 Controllers* Controllers_init(int mouse_x_pos, int mouse_y_pos);
+
+void Controllers_del(Controllers* param);
