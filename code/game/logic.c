@@ -89,7 +89,7 @@ GamePlay* create_game() {
         game_scenario,
         SpritedGameObject_init(
             Object2D_init_2(100, 100, MARIO_WIDTH, MARIO_HEIGHT, 0, 0, true),
-            "player/mario.png"
+            "chars/mario.png"
         ),
         Controllers_init(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     );

@@ -11,7 +11,7 @@ GameScenario* build_game_scenario(const char* phase) {
     char line[LINE_MAX_LENGTH];
 
     char* filepath = malloc(sizeof(char) * FILEPATH_MAX_LENGTH);
-    snprintf(filepath, FILEPATH_MAX_LENGTH, "%s/%s", GAME_DIRPATH, phase);
+    snprintf(filepath, FILEPATH_MAX_LENGTH, "%s/%s.scenario", GAME_DIRPATH, phase);
 
     char* stage = "reading file";
 
