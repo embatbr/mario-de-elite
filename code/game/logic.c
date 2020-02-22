@@ -69,6 +69,11 @@ void draw_game_play(GamePlay* game_play) {
         draw_game_object(game_object);
     }
 
+    for(int i = 0; i < scenario->num_enemies; i++) {
+        SpritedGameObject* enemy = *(scenario->enemies + i);
+        draw_sprited_game_object(screen, enemy);
+    }
+
     draw_sprited_game_object(screen, mario);
 
     // for tests only

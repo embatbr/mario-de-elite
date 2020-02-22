@@ -38,9 +38,12 @@ void SpritedGameObject_del(SpritedGameObject* param);
 typedef struct {
     int num_game_objects;
     GameObject** game_objects;
+    int num_enemies;
+    SpritedGameObject** enemies;
 } GameScenario;
 
-GameScenario* GameScenario_init(int num_game_objects, GameObject** game_objects);
+GameScenario* GameScenario_init(int num_game_objects, GameObject** game_objects,
+                                int num_enemies, SpritedGameObject** enemies);
 
 void GameScenario_del(GameScenario* param);
 

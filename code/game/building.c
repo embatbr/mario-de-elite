@@ -11,7 +11,7 @@ GameScenario* build_game_scenario(const char* phase) {
     char line[LINE_MAX_LENGTH];
 
     char* filepath = malloc(sizeof(char) * FILEPATH_MAX_LENGTH);
-    snprintf(filepath, FILEPATH_MAX_LENGTH, "%s/%s.scenario", GAME_DIRPATH, phase);
+    snprintf(filepath, FILEPATH_MAX_LENGTH, "%s/%s", GAME_DIRPATH, phase);
 
     char* stage = "reading file";
 
@@ -21,7 +21,10 @@ GameScenario* build_game_scenario(const char* phase) {
     int platform_count = 0;
     int num_blocks = -1;
     int block_count = 0;
+    int num_enemies = -1;
+    int enemy_count = 0;
     GameObject** game_objects = NULL;
+    SpritedGameObject** enemies = NULL;
 
     FILE *file = fopen(filepath, "r");
     if(file != NULL) {
@@ -81,10 +84,33 @@ GameScenario* build_game_scenario(const char* phase) {
                     stage = "reading file";
                 }
             }
+            else if(strcmp(stage, "reading file") == 0 && strcmp(line, "enemies") == 0) {
+                stage = "reading number of enemies";
+            }
+            else if(strcmp(stage, "reading number of enemies") == 0) {
+                stage = "reading enemies";
+                num_enemies = atoi(line);
+                enemies = malloc(sizeof(SpritedGameObject*) * num_enemies);
+            }
+            else if(strcmp(stage, "reading enemies") == 0) {
+                int x_pos = atoi(strtok(line, " "));
+                int y_pos = atoi(strtok(NULL, " "));
+                int width = atoi(strtok(NULL, " "));
+                int height = atoi(strtok(NULL, " "));
+                char* sprite_filename = strtok(NULL, " ");
+
+                Object2D* object2d = Object2D_init_2(x_pos, y_pos, width, height, 0, 0, true);
+                *(enemies + enemy_count) = SpritedGameObject_init(object2d, sprite_filename);
+
+                enemy_count++;
+                if(enemy_count == num_enemies) {
+                    stage = "reading file";
+                }
+            }
         }
 
         fclose(file);
     }
 
-    return GameScenario_init(num_game_objects, game_objects);
+    return GameScenario_init(num_game_objects, game_objects, num_enemies, enemies);
 }

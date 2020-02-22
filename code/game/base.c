@@ -34,11 +34,14 @@ void SpritedGameObject_del(SpritedGameObject* param) {
 }
 
 
-GameScenario* GameScenario_init(int num_game_objects, GameObject** game_objects) {
+GameScenario* GameScenario_init(int num_game_objects, GameObject** game_objects,
+                                int num_enemies, SpritedGameObject** enemies) {
     GameScenario* ret = malloc(sizeof(GameScenario));
 
     ret->num_game_objects = num_game_objects;
     ret->game_objects = game_objects;
+    ret->num_enemies = num_enemies;
+    ret->enemies = enemies;
 
     return ret;
 }
@@ -48,6 +51,10 @@ void GameScenario_del(GameScenario* param) {
         GameObject_del(*(param->game_objects + i));
     }
     free(param->game_objects);
+    for(int i = 0; i < param->num_enemies; i++) {
+        SpritedGameObject_del(*(param->enemies + i));
+    }
+    free(param->enemies);
     free(param);
 }
 

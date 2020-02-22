@@ -1,0 +1,13 @@
+4
+platforms
+2
+320 465 640
+275 320 250
+blocks
+2
+425 432 50 64
+525 360 100 20
+enemies
+2
+150 451 26 26 chars/red_turtle.png
+200 306 26 26 chars/green_turtle.png
