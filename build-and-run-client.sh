@@ -14,6 +14,7 @@ fi
 g++ \
     src/client/main.cpp \
     src/client/controllers/Keyboard.cpp \
+    src/server/base/Point2D.cpp \
     -o ${EXEC_FILENAME} \
     $(pkg-config --libs allegro-5 allegro_image-5 allegro_primitives-5)
 
