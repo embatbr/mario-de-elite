@@ -14,7 +14,12 @@ fi
 g++ \
     src/client/main.cpp \
     src/client/controllers/Keyboard.cpp \
+    src/client/communications/GameInputWriter.cpp \
+    src/client/communications/GameOutputReader.cpp \
     src/server/base/Point2D.cpp \
+    src/server/communications/GameInputReader.cpp \
+    src/server/communications/GameOutputWriter.cpp \
+    src/server/logic/Game.cpp \
     -o ${EXEC_FILENAME} \
     $(pkg-config --libs allegro-5 allegro_image-5 allegro_primitives-5)
 

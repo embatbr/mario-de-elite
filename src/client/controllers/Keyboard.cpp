@@ -23,9 +23,6 @@ void Keyboard::capture(ALLEGRO_EVENT ev) {
         if(keycode == KEY_PAUSE) {
             this->key_pause_pressed = key_is_down;
         }
-        if(keycode == KEY_SELECT) {
-            this->key_select_pressed = key_is_down;
-        }
         if(keycode == KEY_LEFT) {
             this->key_left_pressed = key_is_down;
         }
@@ -45,8 +42,6 @@ map<int, bool> Keyboard::read() {
     map<int, bool> keys;
 
     keys[KEY_PAUSE] = this->key_pause_pressed;
-    keys[KEY_SELECT] = this->key_select_pressed;
-
     keys[KEY_LEFT] = this->key_left_pressed;
     keys[KEY_RIGHT] = this->key_right_pressed;
     keys[KEY_UP] = this->key_up_pressed;

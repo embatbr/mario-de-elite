@@ -4,24 +4,27 @@ After, sleeps for 40 milliseconds minus the processing time.
 */
 
 #include <iostream>
+#include <list>
 #include <map>
+#include <string>
 using namespace std;
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
 #include "controllers/Keyboard.h"
+#include "communications/GameInputWriter.h"
+#include "communications/GameOutputReader.h"
 #include "../server/base/Point2D.h"
+#include "../server/logic/Game.h"
 
 
 #define FPS 25
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
-#define SPEED 5
 
 #define BASE_COLOR_WHITE al_map_rgb(255, 255, 255)
 #define BASE_COLOR_BLACK al_map_rgb(0, 0, 0)
-#define SIZE 20
 
 
 ALLEGRO_EVENT_QUEUE* event_queue = NULL;
@@ -109,10 +112,10 @@ void register_events_sources() {
 
 int main(int argc, char** argv) {
     Keyboard* keyboard = new Keyboard();
+    GameInputWriter* game_input_writer = new GameInputWriter(keyboard);
+    GameOutputReader* game_output_reader = new GameOutputReader();
 
-    Point2D *player = new Point2D(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-    int x_speed = 0;
-    int y_speed = 0;
+    Game* game = new Game();
 
     if(!init_allegro_devices()) {
         return -1;
@@ -129,53 +132,30 @@ int main(int argc, char** argv) {
         keyboard->capture(ev);
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
-            map<int, bool> keys = keyboard->read();
+            string input = game_input_writer->write();
+            list<string> output_string = game->run(input);
+            list<int> output = game_output_reader->read(output_string);
 
-            cout << "key_pause_pressed: " << keys[KEY_PAUSE] << endl;
-            cout << "key_select_pressed: " << keys[KEY_SELECT] << endl;
-            cout << "key_left_pressed: " << keys[KEY_LEFT] << endl;
-            cout << "key_right_pressed: " << keys[KEY_RIGHT] << endl;
-            cout << "key_up_pressed: " << keys[KEY_UP] << endl;
-            cout << "key_down_pressed: " << keys[KEY_DOWN] << endl << endl;
-
-            if(keys[KEY_PAUSE]) {
-                break;
-            }
-            if(keys[KEY_LEFT]) {
-                x_speed = x_speed - SPEED;
-            }
-            if(keys[KEY_RIGHT]) {
-                x_speed = x_speed + SPEED;
-            }
-            if(keys[KEY_UP]) {
-                y_speed = y_speed - SPEED;
-            }
-            if(keys[KEY_DOWN]) {
-                y_speed = y_speed + SPEED;
-            }
-
-            player->move(x_speed, y_speed);
-
-            cout << "x_speed: " << x_speed << endl;
-            cout << "y_speed: " << y_speed << endl;
-            cout << "x_axis: " << player->x_axis << endl;
-            cout << "y_axis: " << player->y_axis << endl;
+            int x_axis = output.front();
+            output.pop_front();
+            int y_axis = output.front();
+            output.pop_front();
+            int width = output.front();
+            output.pop_front();
+            int height = output.front();
+            output.pop_front();
 
             al_clear_to_color(BASE_COLOR_BLACK);
 
-            // drawing happens here
             al_draw_filled_rectangle(
-                player->x_axis - SIZE/2,
-                player->y_axis - SIZE/2,
-                player->x_axis + SIZE/2,
-                player->y_axis + SIZE/2,
+                x_axis - width/2,
+                y_axis - height/2,
+                x_axis + width/2,
+                y_axis + height/2,
                 BASE_COLOR_WHITE
             );
 
             al_flip_display();
-
-            x_speed = 0;
-            y_speed = 0;
         }
 
         if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {

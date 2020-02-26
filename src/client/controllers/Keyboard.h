@@ -7,7 +7,6 @@ using namespace std;
 
 
 #define KEY_PAUSE 59 // ESC
-#define KEY_SELECT 67 // ENTER
 #define KEY_LEFT 1 // A
 #define KEY_RIGHT 4 // D
 #define KEY_UP 23 // W
@@ -17,8 +16,6 @@ using namespace std;
 class Keyboard {
     private:
         bool key_pause_pressed;
-        bool key_select_pressed;
-
         bool key_left_pressed;
         bool key_right_pressed;
         bool key_up_pressed;
