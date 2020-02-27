@@ -13,10 +13,8 @@ using namespace std;
 #include <allegro5/allegro_primitives.h>
 
 #include "controllers/Keyboard.h"
-#include "communications/GameInputWriter.h"
-#include "communications/GameOutputReader.h"
-#include "../server/base/Point2D.h"
-#include "../server/logic/Game.h"
+#include "settings/Inputs.h"
+#include "logic/Game.h"
 
 
 #define FPS 25
@@ -112,9 +110,6 @@ void register_events_sources() {
 
 int main(int argc, char** argv) {
     Keyboard* keyboard = new Keyboard();
-    GameInputWriter* game_input_writer = new GameInputWriter(keyboard);
-    GameOutputReader* game_output_reader = new GameOutputReader();
-
     Game* game = new Game();
 
     if(!init_allegro_devices()) {
@@ -132,27 +127,17 @@ int main(int argc, char** argv) {
         keyboard->capture(ev);
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
-            string input = game_input_writer->write();
-            list<string> output_string = game->run(input);
-            list<int> output = game_output_reader->read(output_string);
+            map<string, bool> keys = keyboard->read();
+            game->update(keys);
 
-            int x_axis = output.front();
-            output.pop_front();
-            int y_axis = output.front();
-            output.pop_front();
-            int width = output.front();
-            output.pop_front();
-            int height = output.front();
-            output.pop_front();
-
-            al_clear_to_color(BASE_COLOR_BLACK);
+            al_clear_to_color(BASE_COLOR_WHITE);
 
             al_draw_filled_rectangle(
-                x_axis - width/2,
-                y_axis - height/2,
-                x_axis + width/2,
-                y_axis + height/2,
-                BASE_COLOR_WHITE
+                game->player->position->x_axis - game->player->width/2,
+                game->player->position->y_axis - game->player->height/2,
+                game->player->position->x_axis + game->player->width/2,
+                game->player->position->y_axis + game->player->height/2,
+                BASE_COLOR_BLACK
             );
 
             al_flip_display();

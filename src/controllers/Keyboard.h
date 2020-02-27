@@ -1,16 +1,10 @@
 #pragma once
 
 #include <map>
+#include <string>
 using namespace std;
 
 #include <allegro5/allegro.h>
-
-
-#define KEY_PAUSE 59 // ESC
-#define KEY_LEFT 1 // A
-#define KEY_RIGHT 4 // D
-#define KEY_UP 23 // W
-#define KEY_DOWN 19 // S
 
 
 class Keyboard {
@@ -26,5 +20,5 @@ class Keyboard {
         ~Keyboard();
 
         void capture(ALLEGRO_EVENT ev);
-        map<int, bool> read();
+        map<string, bool> read();
 };

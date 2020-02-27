@@ -1,4 +1,6 @@
 #include "Keyboard.h"
+#include "../settings/InputKeys.h"
+#include "../settings/Inputs.h"
 
 
 Keyboard::Keyboard() {
@@ -20,32 +22,32 @@ void Keyboard::capture(ALLEGRO_EVENT ev) {
     if(key_is_down || key_is_up) {
         int keycode = ev.keyboard.keycode;
 
-        if(keycode == KEY_PAUSE) {
+        if(keycode == InputKeys::PAUSE) {
             this->key_pause_pressed = key_is_down;
         }
-        if(keycode == KEY_LEFT) {
+        if(keycode == InputKeys::LEFT) {
             this->key_left_pressed = key_is_down;
         }
-        if(keycode == KEY_RIGHT) {
+        if(keycode == InputKeys::RIGHT) {
             this->key_right_pressed = key_is_down;
         }
-        if(keycode == KEY_UP) {
+        if(keycode == InputKeys::UP) {
             this->key_up_pressed = key_is_down;
         }
-        if(keycode == KEY_DOWN) {
+        if(keycode == InputKeys::DOWN) {
             this->key_down_pressed = key_is_down;
         }
     }
 }
 
-map<int, bool> Keyboard::read() {
-    map<int, bool> keys;
+map<string, bool> Keyboard::read() {
+    map<string, bool> keys;
 
-    keys[KEY_PAUSE] = this->key_pause_pressed;
-    keys[KEY_LEFT] = this->key_left_pressed;
-    keys[KEY_RIGHT] = this->key_right_pressed;
-    keys[KEY_UP] = this->key_up_pressed;
-    keys[KEY_DOWN] = this->key_down_pressed;
+    keys[INPUT_KEY_PAUSE] = this->key_pause_pressed;
+    keys[INPUT_KEY_LEFT] = this->key_left_pressed;
+    keys[INPUT_KEY_RIGHT] = this->key_right_pressed;
+    keys[INPUT_KEY_UP] = this->key_up_pressed;
+    keys[INPUT_KEY_DOWN] = this->key_down_pressed;
 
     return keys;
 }
