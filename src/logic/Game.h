@@ -10,15 +10,13 @@ using namespace std;
 
 class Game {
     private:
-        // Box2D *player;
+        Box2D *player;
 
         tuple<int, int> process_key_input(map<string, bool> keys);
 
     public:
-        Box2D *player;
-
         Game();
         ~Game();
 
-        void update(map<string, bool> keys);
+        tuple<Point2D, Point2D> update(map<string, bool> keys);
 };

@@ -1,8 +1,3 @@
-/**
-Client main file. Reads inputs, sends to server and show results (images and sounds).
-After, sleeps for 40 milliseconds minus the processing time.
-*/
-
 #include <iostream>
 #include <list>
 #include <map>
@@ -12,17 +7,16 @@ using namespace std;
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
+#include "base/Point2D.h"
 #include "inputters/Keyboard.h"
 #include "settings/Inputs.h"
 #include "logic/Game.h"
+#include "outputters/Graphics.h"
 
 
 #define FPS 25
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
-
-#define BASE_COLOR_WHITE al_map_rgb(255, 255, 255)
-#define BASE_COLOR_BLACK al_map_rgb(0, 0, 0)
 
 
 ALLEGRO_EVENT_QUEUE* event_queue = NULL;
@@ -111,6 +105,7 @@ void register_events_sources() {
 int main(int argc, char** argv) {
     Keyboard* keyboard = new Keyboard();
     Game* game = new Game();
+    Graphics* graphics = new Graphics();
 
     if(!init_allegro_devices()) {
         return -1;
@@ -128,19 +123,8 @@ int main(int argc, char** argv) {
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
             map<string, bool> keys = keyboard->read();
-            game->update(keys);
-
-            al_clear_to_color(BASE_COLOR_WHITE);
-
-            al_draw_filled_rectangle(
-                game->player->position->x_axis - game->player->width/2,
-                game->player->position->y_axis - game->player->height/2,
-                game->player->position->x_axis + game->player->width/2,
-                game->player->position->y_axis + game->player->height/2,
-                BASE_COLOR_BLACK
-            );
-
-            al_flip_display();
+            tuple<Point2D, Point2D> player_points = game->update(keys);
+            graphics->paint_contour(player_points);
         }
 
         if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {

@@ -21,11 +21,23 @@ tuple<int, int> Game::process_key_input(map<string, bool> keys) {
 }
 
 
-void Game::update(map<string, bool> keys) {
+tuple<Point2D, Point2D> Game::update(map<string, bool> keys) {
     tuple<int, int> processed_key_input = this->process_key_input(keys);
 
     int x_speed = get<0>(processed_key_input);
     int y_speed = get<1>(processed_key_input);
 
     this->player->move(x_speed, y_speed);
+
+    Point2D sup_left = Point2D(
+        this->player->position->x_axis - this->player->width/2,
+        this->player->position->y_axis - this->player->height/2
+    );
+
+    Point2D inf_right = Point2D(
+        this->player->position->x_axis + this->player->width/2,
+        this->player->position->y_axis + this->player->height/2
+    );
+
+    return tuple<Point2D, Point2D>{sup_left, inf_right};
 }
