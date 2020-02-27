@@ -15,7 +15,7 @@ g++ \
     src/main.cpp \
     src/base/Box2D.cpp \
     src/base/Point2D.cpp \
-    src/controllers/Keyboard.cpp \
+    src/inputters/Keyboard.cpp \
     src/logic/Game.cpp \
     -o ${EXEC_FILENAME} \
     $(pkg-config --libs allegro-5 allegro_image-5 allegro_primitives-5)

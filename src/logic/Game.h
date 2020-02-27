@@ -12,7 +12,7 @@ class Game {
     private:
         // Box2D *player;
 
-        tuple<int, int> process_input(map<string, bool> keys);
+        tuple<int, int> process_key_input(map<string, bool> keys);
 
     public:
         Box2D *player;
