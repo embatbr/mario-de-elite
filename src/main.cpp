@@ -7,6 +7,7 @@ using namespace std;
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
+#include "base/Object2D.h"
 #include "base/Point2D.h"
 #include "inputters/Keyboard.h"
 #include "settings/Inputs.h"
@@ -123,8 +124,8 @@ int main(int argc, char** argv) {
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
             map<string, bool> keys = keyboard->read();
-            tuple<Point2D, Point2D> player_points = game_phase->update(keys);
-            graphics->paint_contour(player_points);
+            list<tuple<Point2D, Point2D, Object2DType>> cur_state = game_phase->update(keys);
+            graphics->draw_contour(cur_state);
         }
 
         if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {

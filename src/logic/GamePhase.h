@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include <map>
 #include <string>
 #include <tuple>
@@ -12,6 +13,7 @@ class GamePhase {
     private:
         string name;
         Object2D *player;
+        list<Object2D*> enemies;
 
         tuple<int, int> process_key_input(map<string, bool> keys);
 
@@ -19,5 +21,5 @@ class GamePhase {
         GamePhase(string name);
         ~GamePhase();
 
-        tuple<Point2D, Point2D> update(map<string, bool> keys);
+        list<tuple<Point2D, Point2D, Object2DType>> update(map<string, bool> keys);
 };
