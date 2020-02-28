@@ -20,14 +20,8 @@ void Graphics::paint_contour(tuple<Point2D, Point2D> points) {
 
     al_clear_to_color(BASE_COLOR_WHITE);
 
-    al_draw_rectangle(
-        sup_left.x_axis,
-        sup_left.y_axis,
-        inf_right.x_axis,
-        inf_right.y_axis,
-        BASE_COLOR_BLACK,
-        1
-    );
+    al_draw_rectangle(sup_left.x_axis, sup_left.y_axis, inf_right.x_axis,
+        inf_right.y_axis, BASE_COLOR_BLACK, 1);
 
     al_flip_display();
 }

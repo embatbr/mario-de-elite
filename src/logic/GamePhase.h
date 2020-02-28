@@ -5,18 +5,19 @@
 #include <tuple>
 using namespace std;
 
-#include "../base/Box2D.h"
+#include "../base/Object2D.h"
 
 
-class Game {
+class GamePhase {
     private:
-        Box2D *player;
+        string name;
+        Object2D *player;
 
         tuple<int, int> process_key_input(map<string, bool> keys);
 
     public:
-        Game();
-        ~Game();
+        GamePhase(string name);
+        ~GamePhase();
 
         tuple<Point2D, Point2D> update(map<string, bool> keys);
 };

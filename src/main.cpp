@@ -10,7 +10,7 @@ using namespace std;
 #include "base/Point2D.h"
 #include "inputters/Keyboard.h"
 #include "settings/Inputs.h"
-#include "logic/Game.h"
+#include "logic/GamePhase.h"
 #include "outputters/Graphics.h"
 
 
@@ -104,7 +104,7 @@ void register_events_sources() {
 
 int main(int argc, char** argv) {
     Keyboard* keyboard = new Keyboard();
-    Game* game = new Game();
+    GamePhase* game_phase = new GamePhase("1");
     Graphics* graphics = new Graphics();
 
     if(!init_allegro_devices()) {
@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
             map<string, bool> keys = keyboard->read();
-            tuple<Point2D, Point2D> player_points = game->update(keys);
+            tuple<Point2D, Point2D> player_points = game_phase->update(keys);
             graphics->paint_contour(player_points);
         }
 
@@ -131,6 +131,10 @@ int main(int argc, char** argv) {
             break;
         }
     }
+
+    delete graphics;
+    delete game_phase;
+    delete keyboard;
 
     deinit_allegro_devices();
 
