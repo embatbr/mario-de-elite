@@ -14,6 +14,7 @@ class GamePhase {
         string name;
         Object2D *player;
         list<Object2D*> enemies;
+        list<Object2D*> scenario;
 
         tuple<int, int> process_key_input(map<string, bool> keys);
 

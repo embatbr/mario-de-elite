@@ -13,6 +13,7 @@ GamePhase::GamePhase(string name) {
 
     this->player = phase.load_player();
     this->enemies = phase.load_enemies();
+    this->scenario = phase.load_scenario();
 }
 
 
@@ -36,6 +37,11 @@ list<tuple<Point2D, Point2D, Object2DType>> GamePhase::update(map<string, bool> 
     this->player->y_speed = get<1>(processed_key_input);
 
     this->player->move();
+
+    for(list<Object2D*>::iterator it=this->scenario.begin(); it != this->scenario.end(); it++) {
+        Object2D* scenario_object = *it;
+        ret.push_back(scenario_object->get_drawing_contour());
+    }
 
     for(list<Object2D*>::iterator it=this->enemies.begin(); it != this->enemies.end(); it++) {
         Object2D* enemy = *it;

@@ -11,7 +11,8 @@ typedef enum {
     OBJECT_PLATFORM,
     OBJECT_BLOCK,
     OBJECT_ENEMY,
-    OBJECT_PLAYER
+    OBJECT_PLAYER,
+    OBJECT_BULLET
 } Object2DType;
 
 class Object2D {

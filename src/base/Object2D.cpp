@@ -2,6 +2,13 @@
 
 
 Object2D::Object2D(int x_pos, int y_pos, int width, int height, Object2DType type) {
+    if(type == OBJECT_PLATFORM) {
+        height = 0;
+    }
+    // else if(width <= 0 || height <= 0) {
+    //     throw "width and height must be positive integers";
+    // }
+
     this->position = new Point2D(x_pos, y_pos);
     this->box = new Box2D(width, height);
     this->type = type;
