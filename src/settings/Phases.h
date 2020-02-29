@@ -73,7 +73,7 @@ class Phase1: public Phase {
     public:
 
         Phase1(): Phase() {
-            this->player_data = tuple<int, int, int, int>(100, 450, 20, 35);
+            this->player_data = tuple<int, int, int, int>(110, 450, 20, 35);
 
             this->enemies_data.push_back(tuple<int, int, int, int>{300, 300, 30, 30});
             this->enemies_data.push_back(tuple<int, int, int, int>{200, 300, 30, 30});
@@ -106,7 +106,7 @@ class Phase1: public Phase {
                 tuple<int, int, int, int, Object2DType>{370, 420, 140, 50, OBJECT_BLOCK}
             );
             this->scenario_data.push_back(
-                tuple<int, int, int, int, Object2DType>{340, 385, 5, 20, OBJECT_BLOCK}
+                tuple<int, int, int, int, Object2DType>{320, 385, 5, 20, OBJECT_BLOCK}
             );
             this->scenario_data.push_back(
                 tuple<int, int, int, int, Object2DType>{420, 370, 5, 20, OBJECT_BLOCK}
@@ -124,7 +124,52 @@ class Phase1: public Phase {
                 tuple<int, int, int, int, Object2DType>{50, 450, 20, 0, OBJECT_PLATFORM}
             );
             this->scenario_data.push_back(
-                tuple<int, int, int, int, Object2DType>{80, 450, 10, 0, OBJECT_PLATFORM}
+                tuple<int, int, int, int, Object2DType>{85, 450, 10, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 300, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 280, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 260, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 240, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 220, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 200, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 180, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 160, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 140, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 120, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 100, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{350, 80, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{475, 100, 10, 40, OBJECT_BLOCK}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{450, 100, 30, 0, OBJECT_PLATFORM}
+            );
+            this->scenario_data.push_back(
+                tuple<int, int, int, int, Object2DType>{375, 340, 40, 20, OBJECT_BLOCK}
             );
         }
         ~Phase1() {}
